@@ -1,0 +1,181 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset=utf-8>
+        <title>Collapse Analyzer</title>
+        <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+        <link rel=stylesheet href="astylesheet.css">
+    </head>
+    <body>
+        <div class=header>
+            <input type=file id=jsonfile accept=".json" onChange="loadFile();">
+            <button onclick="hysteresis_test();">HYS</button>
+            <button onclick="sdf_test();">SDF</button>
+            <button onclick="mdf_test();">MDF</button>
+            <button onclick="ida_test();">IDA</button>
+            <p><canvas id=plot></canvas></p>
+        </div>
+        <div class=main>
+            <div class=tabconts>
+                <ol>
+                    <li><a href="#chap1">Seismic Response Analysis</a></li>
+                    <li><a href="#chap2">Hysteresis Model</a></li>
+                    <li><a href="#chap3">Ibarra-Medina-Krawinkler Hysteresis Model</a></li>
+                    <li><a href="#chap4">Collapse Analysis</a></li>
+                    <li><a href="#chap5">Incremental Dynamic Analysis</a></li>
+                    <li><a href="#chap6">Conducting IDA</a></li>
+                    <li><a href="#chap7">Summary of Result</a></li>  
+                </ol>
+            </div>
+            <div class=contents>
+                <button class=open>1. Seismic Response Analysis</button>
+                <div id=chap1>
+                    <p><canvas id=plot1></canvas></p>
+                    <button class=execute onclick="Chapter1();">Re Run</button>
+                    <button class=execute onclick="clearInterval(sint1)">Stop</button>
+                    <p><canvas id=plot2></canvas></p>
+                    <progress value="0" max="1" id="chap1progress"></progress>
+                    <p class=close>
+                        <a href="#chap1">Next</a>
+                    </p>
+                </div>
+                <button class=open>2. Hysteresis Model</button>
+                <div id=chap2>
+                    <p><canvas id=plot3></canvas></p>
+                    <button class=execute onclick="Chapter2();">Re Run</button>
+                    <button class=execute onclick="clearInterval(sint2)">Stop</button>
+                    <p><canvas id=plot4></canvas></p>
+                    <progress value="0" max="1" id="chap2progress"></progress>
+                    <p class=close>
+                        <a href="#chap2">Next</a>
+                    </p> 
+                </div>
+                <button class=open>3. Ibarra-Medina-Krawinkler Hysteresis Model</button>
+                <div id=chap3>
+                    <p><canvas id=plot5></canvas></p>
+                    <progress value="0" max="1" id="chap3progress"></progress>
+                    <button class=execute onclick="Chapter3();">Re Run</button>
+                    <button class=execute onclick="clearInterval(sint3)">Stop</button>
+                    <p><canvas id=plot6></canvas></p>
+                    <table>
+                        <tr>
+                            <th><button class=Selector onclick="paramSet('lambda',100);Chapter31();">Lambda</button></th>
+                            <td><button class=Selector onclick="paramSet('lambda',25);Chapter31();">25</button></td>
+                            <td><button class=Selector onclick="paramSet('lambda',50);Chapter31();">50</button></td>
+                            <td><button class=Selector onclick="paramSet('lambda',100);Chapter31();">100</button></td>
+                            <td><button class=Selector onclick="paramSet('lambda',10000);Chapter31();">10000</button></td>
+                        </tr>
+                        <tr>
+                            <th><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">delta_c</button></th>
+                            <td><button class=Selector onclick="paramSet('dp',0.5);Chapter31();">1.5%</button></td>
+                            <td><button class=Selector onclick="paramSet('dp',1.0);Chapter31();">2.0%</button></td>
+                            <td><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">3.0%</button></td>
+                            <td><button class=Selector onclick="paramSet('dp',3.0);Chapter31();">4.0%</button></td>
+                        </tr>
+                        <tr>
+                            <th><button class=Selector onclick="paramSet('as',0.01);Chapter31();">alpha_s</button></th>
+                            <td><button class=Selector onclick="paramSet('as',0.01);Chapter31();">1.0%</button></td>
+                            <td><button class=Selector onclick="paramSet('as',0.03);Chapter31();">3.0%</button></td>
+                            <td><button class=Selector onclick="paramSet('as',0.05);Chapter31();">5.0%</button></td>
+                        </tr>
+                        <tr>
+                            <th><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">alpha_c</button></th>
+                            <td><button class=Selector onclick="paramSet('ac',0.05);Chapter31();">5.0%</button></td>
+                            <td><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">10%</button></td>
+                            <td><button class=Selector onclick="paramSet('ac',0.20);Chapter31();">20%</button></td>
+                        </tr>
+                    </table>   
+                    <button class=execute onclick="setting=setter(1);Chapter31();">Reset</button>
+                    <p class=close>
+                        <a href="#chap3">Next</a>
+                    </p> 
+                </div>
+                <button class=open>4. Collapse Analysis</button>
+                <div id=chap4>
+                    <p><canvas id=plot7></canvas></p>
+                    <progress value="0" max="1" id="chap4progress"></progress>
+                    <input type=text placeholder="Amplitude" id=plot7amp>
+                    <button class=execute onclick="ga=gm_random(1);">Change Ground Motion</button>
+                    <button class=execute onclick="Chapter4();">Run</button>
+                    <button class=execute onclick="clearInterval(sint4)">Stop</button>
+                    <b id=chap4table><table><tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr></table></b>
+                    <p class=close>
+                        <a href="#chap4">Next</a>
+                    </p> 
+                </div>        
+                <button class=open>5. Incremental Dynamic Analysis</button>
+                <div id=chap5>
+                    <p><canvas id=plot8></canvas></p>
+                    <progress value="0" max="1" id="chap5progress"></progress>
+                    <input type=text placeholder="No. of used GMs" id=plot8no>
+                    <button class=execute onclick="Chapter5();">Run</button>
+                    <b id=chap5table><table><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table></b>
+                    <p>*NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation</p>
+                    <p class=close>
+                        <a href="#chap5">Next</a>
+                    </p> 
+                </div>
+                <button class=open>6. Conducting IDA</button>
+                <div id=chap6>
+                    <div id=chap6.1>
+                        <p><canvas id=plot9></canvas></p>
+                        <table>
+                            <tr>
+                                <th><button class=Selector onclick="paramSet('lambda',100);Chapter31();">Lambda</button></th>
+                                <td><button class=Selector onclick="paramSet('lambda',25);Chapter31();">25</button></td>
+                                <td><button class=Selector onclick="paramSet('lambda',50);Chapter31();">50</button></td>
+                                <td><button class=Selector onclick="paramSet('lambda',100);Chapter31();">100</button></td>
+                                <td><button class=Selector onclick="paramSet('lambda',10000);Chapter31();">10000</button></td>
+                            </tr>
+                            <tr>
+                                <th><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">delta_c</button></th>
+                                <td><button class=Selector onclick="paramSet('dp',0.5);Chapter31();">1.5%</button></td>
+                                <td><button class=Selector onclick="paramSet('dp',1.0);Chapter31();">2.0%</button></td>
+                                <td><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">3.0%</button></td>
+                                <td><button class=Selector onclick="paramSet('dp',3.0);Chapter31();">4.0%</button></td>
+                            </tr>
+                            <tr>
+                                <th><button class=Selector onclick="paramSet('as',0.01);Chapter31();">alpha_s</button></th>
+                                <td><button class=Selector onclick="paramSet('as',0.01);Chapter31();">1.0%</button></td>
+                                <td><button class=Selector onclick="paramSet('as',0.03);Chapter31();">3.0%</button></td>
+                                <td><button class=Selector onclick="paramSet('as',0.05);Chapter31();">5.0%</button></td>
+                            </tr>
+                            <tr>
+                                <th><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">alpha_c</button></th>
+                                <td><button class=Selector onclick="paramSet('ac',0.05);Chapter31();">5.0%</button></td>
+                                <td><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">10%</button></td>
+                                <td><button class=Selector onclick="paramSet('ac',0.20);Chapter31();">20%</button></td>
+                            </tr>
+                        </table>   
+                        <button class=execute onclick="setting=setter(1);Chapter60();">Reset</button>
+                        <input type=text placeholder="No. of used GMs" id=plot9no>
+                        <button class=execute>Change Ground Motion</button>
+                        <button class=execute onclick="Chapter61();">Run</button>
+                    </div>
+                    <div id=chap6.2>                   
+                        <p><canvas id=plot10></canvas></p>
+                        <p><canvas id=plot11></canvas></p>
+                    </div>       
+                    <p class=close>
+                        <a href="#chap6">Next</a>
+                    </p>      
+                </div>
+                <button class=open>7. Summary of Result</button>
+                <div id=chap7>
+                    <p><canvas id=plot12></canvas></p>
+                    <p><canvas id=plot13></canvas></p>
+                    <b id=result></b>
+                    <p class=close>
+                        <a href="#chap7">Close</a>
+                    </p> 
+                </div>
+            </div>
+        </div>
+        <div class=footer>
+        </div> 
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+        <script src="hysteresismodel.js"></script>
+        <script src="collapse.js"></script>
+    </body>
+</html>
