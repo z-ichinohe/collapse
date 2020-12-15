@@ -29,7 +29,7 @@ function elem(id){
     return document.getElementById(id);
 }
 
-function openFile(){
+()=>{
     const DATA_URL = './gmset.json';
     fetch(DATA_URL)
     .then(function(response){
@@ -40,7 +40,7 @@ function openFile(){
     });
 }
 
-openFile();
+//openFile();
 
 function gm_random(n){
     let gmset;
