@@ -1,4 +1,4 @@
-var ga={},res={},sett={},myChart,response,gas=[];
+var ga={},gas=[];
 var plot1,plot2,plot3,plot4,plot5,plot6,plot7,plot8,plot9,plot10,plot11;
 var sint1,sint2,sint3,sint4,sint51,sint52;
 var chap4table=["<tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr>"];
@@ -42,31 +42,6 @@ function openFile(){
 
 openFile();
 
-function loadFile(){
-    var file=elem("jsonfile").files[0];
-    var reader=new FileReader();
-    reader.onload=(event)=>{
-        gas=JSON.parse(reader.result);
-        ga=gas[0];
-        if(ga) res=spectrum(ga);
-    }
-    reader.readAsText(file);
-}
-
-function loadPage(){
-    myChart = new Chart(elem("plot"),{
-        type:'line',
-        data: {
-            labels: res.T,
-            datasets: [{
-                label: "sa",
-                borderColor: "#607d8b",
-                data: res.AA,
-            }]
-        },
-    });
-}
-
 function gm_random(n){
     let gmset;
     if(n>gas.length){
@@ -82,25 +57,6 @@ function gm_random(n){
         if(n===1) gmset=gmset[0];
     }
     return gmset;
-}
-
-function plot(xdata,ydata){
-    if(myChart) myChart.destroy();
-    if(xdata.length===1) xdata=ones(1,ydata.length,xdata[0])[0];
-    if(ydata.length===1) ydata=ones(1,xdata.length,ydata[0])[0];
-    if(xdata.length===ydata.length){
-        const datasets=xdata.map((val,idx)=>{return {
-            type:"line",
-            lineTension:0,
-            data:val.map((v,j)=>{return {x:v,y:ydata[idx][j]}}),
-        }});
-        myChart=new Chart(elem("plot"),{
-            type:'scatter',
-            data:{
-                datasets:datasets,
-            }
-        });        
-    }else console.log("something got wrong.");
 }
 
 function Chapter1(){
