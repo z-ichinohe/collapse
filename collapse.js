@@ -30,16 +30,17 @@ function elem(id){
 }
 
 function openFile(){
-    const DATA_URL = './test.json';
+    const DATA_URL = './gmset.json';
     fetch(DATA_URL)
     .then(function(response){
         return response.json();
     })
     .then(function(jsonData){
-        response=jsonData;
-        console.log(jsonData);
+        gas=jsonData;
     });
 }
+
+openFile();
 
 function loadFile(){
     var file=elem("jsonfile").files[0];
