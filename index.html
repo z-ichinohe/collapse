@@ -89,10 +89,10 @@
                 <button class=open>4. Collapse Analysis</button>
                 <div id=chap4>
                     <p class=shakePlot><canvas id=plot7 width=400 height=400></canvas></p>
-                    <progress value="0" max="1" id="chap4progress"></progress>
-                    <input type=text placeholder="Amplitude" id=plot7amp onChange="Chapter4();">
+                    <progress value="0" max="1" id="chap4progress"></progress><br>
                     <input type=range min=0 max=1.5 step=0.05 id=plot7range value=1.0>
-                    <button class=execute onclick="ga=gm_random(1);">Change Ground Motion</button>
+                    <button class=execute onclick="ga=gm_random(1);">Change GM</button>
+                    <input type=text placeholder="Amplitude" id=plot7amp onChange="Chapter4();">
                     <button class=execute onclick="Chapter4();">Run</button>
                     <button class=execute onclick="clearInterval(sint4)">Stop</button>
                     <b id=chap4table><table><tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr></table></b>
@@ -103,9 +103,9 @@
                 <button class=open>5. Incremental Dynamic Analysis</button>
                 <div id=chap5>
                     <p><canvas id=plot8></canvas></p>
-                    <progress value="0" max="1" id="chap5progress"></progress>
+                    <progress value="0" max="1" id="chap5progress"></progress><br>
                     <input type=text placeholder="No. of used GMs" id=plot8no>
-                    <button class=execute onclick="Chapter5();">Run</button>
+                    <button class=execute onclick="Chapter5();">Run</button><br>
                     <b id=chap5table><table><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table></b>
                     <p class=pp>*NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation</p>
                     <p class=close>
