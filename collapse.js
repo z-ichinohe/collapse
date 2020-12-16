@@ -6,6 +6,10 @@ var chap5table=["<tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr>"];
 var metroColors=["#f39700","#e60012","#9caeb7","#00a7db","#009944","#d7c447","#9b7cb6","#00ada9","#bb641d"];
 var developColors=["#9fc4e7","#c2ddb6","#f8cb9c","#ff7f7f"];
 
+window.onload=()=>{
+    elem("plot7range").addEventListener('input',(event)=>elem("plot7amp").value=event.target.value);
+}
+
 function paramSet(str,par){
     if(str==="lambda"){
         setting.system.ls=par;
@@ -390,6 +394,7 @@ function Chapter4(){
         control.amp=1.0;
         elem("plot7amp").value="1.0";
     }
+    elem("plot7range").value=elem("plot7amp").value;
     const result=sdf(system,ga,control);
     chap4table.push(["<tr><th>",String(chap4table.length),".</th><td>",ga.name,"</td><td>",String(control.amp),"</td><td>",result.collapse,"</td></tr>"].join(""));
     let table4=chap4table.map(val=>val);
