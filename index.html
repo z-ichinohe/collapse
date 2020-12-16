@@ -27,7 +27,7 @@
                         <button class=execute onclick="Chapter1();">Re Run</button><br>
                         <button class=execute onclick="clearInterval(sint1)">Stop</button>
                     </div>
-                    <p class=plot2><canvas id=plot2></canvas></p>
+                    <p class=plot2><canvas id=plot2></canvas></p><br>
                     <progress value="0" max="1" id="chap1progress"></progress>
                     <p class=close>
                         <a href="#chap1">Next</a>
@@ -52,7 +52,7 @@
                     <progress value="0" max="1" id="chap3progress"></progress><br>
                     <button class=execute onclick="Chapter3();">Re Run</button>
                     <button class=execute onclick="clearInterval(sint3)">Stop</button>
-                    <p><canvas id=plot6></canvas></p>
+                    <p><canvas id=plot6 width=400 height=400></canvas></p>
                     <table>
                         <tr>
                             <th><button class=Selector onclick="paramSet('lambda',100);Chapter31();">Lambda</button></th>
@@ -172,7 +172,8 @@
         </div> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
+        <script src="https://www.usamimi.info/~geko/arch_acade/elf021_matrix/matrix_library_v010g.js"></script>
         <script src="hysteresismodel.js"></script>
-        <script src="collapse.js"></script>
+        <script src="spectrum.js"></script>
     </body>
 </html>
