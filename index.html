@@ -4,30 +4,30 @@
         <meta charset=utf-8>
         <title>Collapse Analyzer</title>
         <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-        <link rel=stylesheet href="astylesheet.css">
+        <link rel=stylesheet href="collapse.css">
     </head>
     <body>
         <div class=header>
         </div>
         <div class=main>
             <div class=tabconts>
-                <ol>
-                    <li><a href="#chap1">Seismic Response Analysis</a></li>
-                    <li><a href="#chap2">Hysteresis Model</a></li>
-                    <li><a href="#chap3">Ibarra-Medina-Krawinkler Hysteresis Model</a></li>
-                    <li><a href="#chap4">Collapse Analysis</a></li>
-                    <li><a href="#chap5">Incremental Dynamic Analysis</a></li>
-                    <li><a href="#chap6">Conducting IDA</a></li>
-                    <li><a href="#chap7">Summary of Result</a></li>  
-                </ol>
+                <a href="#chap1">1. Seismic Response Analysis</a><br>
+                <a href="#chap2">2. Hysteresis Model</a><br>
+                <a href="#chap3">3. Ibarra-Medina-Krawinkler Hysteresis Model</a><br>
+                <a href="#chap4">4. Collapse Analysis</a><br>
+                <a href="#chap5">5. Incremental Dynamic Analysis</a><br>
+                <a href="#chap6">6. Conducting IDA</a><br>
+                <a href="#chap7">7. Summary of Result</a><br>
             </div>
             <div class=contents>
                 <button class=open>1. Seismic Response Analysis</button>
                 <div id=chap1>
-                    <p><canvas id=plot1></canvas></p>
-                    <button class=execute onclick="Chapter1();">Re Run</button>
-                    <button class=execute onclick="clearInterval(sint1)">Stop</button>
-                    <p><canvas id=plot2></canvas></p>
+                    <p class=shakePlot><canvas id=plot1 height=400 width=400></canvas></p>
+                    <div class=console>
+                        <button class=execute onclick="Chapter1();">Re Run</button><br>
+                        <button class=execute onclick="clearInterval(sint1)">Stop</button>
+                    </div>
+                    <p class=plot2><canvas id=plot2></canvas></p>
                     <progress value="0" max="1" id="chap1progress"></progress>
                     <p class=close>
                         <a href="#chap1">Next</a>
@@ -35,10 +35,12 @@
                 </div>
                 <button class=open>2. Hysteresis Model</button>
                 <div id=chap2>
-                    <p><canvas id=plot3></canvas></p>
-                    <button class=execute onclick="Chapter2();">Re Run</button>
-                    <button class=execute onclick="clearInterval(sint2)">Stop</button>
-                    <p><canvas id=plot4></canvas></p>
+                    <p class=plot3><canvas id=plot3></canvas></p>
+                    <div class=console>
+                        <button class=execute onclick="Chapter2();">Re Run</button><br>
+                        <button class=execute onclick="clearInterval(sint2)">Stop</button>
+                    </div>
+                    <p class=plot4><canvas id=plot4></canvas></p><br>
                     <progress value="0" max="1" id="chap2progress"></progress>
                     <p class=close>
                         <a href="#chap2">Next</a>
@@ -46,8 +48,8 @@
                 </div>
                 <button class=open>3. Ibarra-Medina-Krawinkler Hysteresis Model</button>
                 <div id=chap3>
-                    <p><canvas id=plot5></canvas></p>
-                    <progress value="0" max="1" id="chap3progress"></progress>
+                    <p><canvas id=plot5 width=400 height=200></canvas></p>
+                    <progress value="0" max="1" id="chap3progress"></progress><br>
                     <button class=execute onclick="Chapter3();">Re Run</button>
                     <button class=execute onclick="clearInterval(sint3)">Stop</button>
                     <p><canvas id=plot6></canvas></p>
@@ -86,9 +88,10 @@
                 </div>
                 <button class=open>4. Collapse Analysis</button>
                 <div id=chap4>
-                    <p><canvas id=plot7></canvas></p>
+                    <p class=shakePlot><canvas id=plot7 width=400 height=400></canvas></p>
                     <progress value="0" max="1" id="chap4progress"></progress>
-                    <input type=text placeholder="Amplitude" id=plot7amp>
+                    <input type=text placeholder="Amplitude" id=plot7amp onChange="Chapter4();">
+                    <input type=range min=0 max=1.5 step=0.05 id=plot7range value=1.0>
                     <button class=execute onclick="ga=gm_random(1);">Change Ground Motion</button>
                     <button class=execute onclick="Chapter4();">Run</button>
                     <button class=execute onclick="clearInterval(sint4)">Stop</button>
@@ -104,7 +107,7 @@
                     <input type=text placeholder="No. of used GMs" id=plot8no>
                     <button class=execute onclick="Chapter5();">Run</button>
                     <b id=chap5table><table><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table></b>
-                    <p>*NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation</p>
+                    <p class=pp>*NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation</p>
                     <p class=close>
                         <a href="#chap5">Next</a>
                     </p> 
