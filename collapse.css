@@ -42,7 +42,7 @@ progress{
 
 .execute{
     width:100px;
-    height:20px;
+    height:30px;
     border-radius:0px;
 }
 
@@ -87,4 +87,27 @@ p{
 
 .pp{
     height:80px;
+}
+
+table{
+    display:inline-block;
+    width:400px;
+}
+
+td,th{
+    text-align:center;
+    padding:0px 0px;
+}
+
+#plot7amp{
+    width:100px;
+}
+
+#plot8no{
+    width:100px;
+}
+
+.Selector{
+    width:70px;
+    height:25px;
 }
