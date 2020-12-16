@@ -48,12 +48,12 @@ progress{
 
 p{
     width:400px;
-    height:200px;
+    height:400px;
     margin-left:auto;
     margin-right:auto;
 }
 
-.plot4{
+.plot2 .plot4{
     height:150px;
 }
 
@@ -79,10 +79,6 @@ p{
 .close{
     width:100%;
     height:20px;
-}
-
-.plot5{
-    width:500px;
 }
 
 .pp{
