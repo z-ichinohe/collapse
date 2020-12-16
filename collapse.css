@@ -1,0 +1,90 @@
+.main{
+    display:inline-block;
+}
+
+.tabconts{
+    float:left;
+    width:20%;
+    position:sticky;
+    top:0;
+    height:1000px;
+}
+
+.contents{
+    width:80%;
+    float:right;
+    text-align:center;
+}
+
+.footer{
+    clear:both;
+}
+
+
+.open{
+    width:100%;
+    border-radius:0px;
+    background-color:#fff;
+    border-left:transparent;
+    border-right:transparent;
+    padding-top:0;
+    margin-top:10px;
+    text-align:center;
+}
+
+a{
+    color:#9baec8;
+}
+
+progress{
+    width:80%;
+}
+
+.execute{
+    width:100px;
+    height:20px;
+    border-radius:0px;
+}
+
+p{
+    width:400px;
+    height:200px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.plot4{
+    height:150px;
+}
+
+.shakePlot{
+    margin-left:10px;
+    margin-right:10px;
+    display:inline-block;
+    transform:rotate(-90deg);
+    width:400px;
+    height:400px;
+}
+
+.plot3{
+    margin-left:10px;
+    margin-right:10px;
+    display:inline-block;
+}
+
+.console{
+    display:inline-block;
+}
+
+.close{
+    width:100%;
+    height:20px;
+}
+
+.plot5{
+    width:500px;
+}
+
+.pp{
+    height:80px;
+}
