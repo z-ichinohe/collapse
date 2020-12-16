@@ -181,7 +181,7 @@ function Chapter2(){
         type:'scatter',
         data:{
             datasets:[{
-                label:"Displacement-Force Relationship for Clough(Non-Deteriorating) Model",
+                label:"Clough(Non-Deteriorating) Model",
                 type:'line',
                 lineTension:0,
                 data:[data[0]],
@@ -281,7 +281,7 @@ function Chapter3(){
         type:'scatter',
         data:{
             datasets:[{
-                label:"Displacement-Force Relationship IMK-Peak-Oriented Model (with Deterioration)",
+                label:"IMK-Peak-Oriented Model (with Deterioration)",
                 type:'line',
                 lineTension:0,
                 data:[data[0]],
