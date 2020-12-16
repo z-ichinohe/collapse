@@ -506,6 +506,7 @@ function Chapter5(){
             fill:false,
             borderColor:metroColors[idx%metroColors.length],
             borderWidth:2,
+            pointBackgroundColor:metroColors[idx%metroColors.length],
         };
         let supamp=5.8,supdef=0,itr=0,infamp=0;   
         const interv1=()=>new Promise(resolve=>{ 
