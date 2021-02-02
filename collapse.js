@@ -82,6 +82,7 @@ const openFile=()=>{
     })
     .then(function(jsonData){
         gas=jsonData;
+        ga=gm_random(1);
     });
 }
 openFile();
