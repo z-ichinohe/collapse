@@ -6,10 +6,10 @@
         <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
         <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css> 
         <script src=https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.js></script>
-        <link rel=stylesheet href="collapse.css">
+        <link rel=stylesheet href="collapse1.css">
     </head>
     <body>
-        <div class=invisible>
+        <div class=header>
             <input type=file id=jsonfile accept=".json" onChange="loadFile();">
         </div>
         <div class=main>
@@ -26,7 +26,8 @@
                         Collapse Analyzerへようこそ<br>
                     </h4>
                     <p class=text-left>
-                        　このサイトでは年倒壊確率を算出するために必要な動的漸増解析のフローを一自由度系の振動解析によって追うことが出来ます。
+                        　このサイトでは年倒壊確率を算出するためなどに用いられる漸増動的解析のフローを、耐力低下を考慮することのできる
+                        Ibarra-Medina-Krawinklerモデルを用いた一自由度系の振動解析によって追うことが出来ます。
                         初めての方は上のボタンをクリックして、誘導付きでお進みください。下のボタンをクリックすると、誘導なしでの閲覧が可能です。
                     </p>
                     <button class="next back1" onclick="openclose(this);Chapter1();" href="#button_chap1">
@@ -387,7 +388,7 @@
 
                     <a class=text-left href="#description_chap5" onclick="return openclose(this);">Description</a> 
                     <p class=text-left id=description_chap5>
-                        
+
                     </p>
                     <a href="#chap5" onclick="openclose(this);">Close</a>
                 </div>
@@ -403,6 +404,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
         <script src="hysteresismodel.js"></script>
-        <script src="collapse.js"></script>
+        <script src="collapse1.js"></script>
     </body>
 </html>
