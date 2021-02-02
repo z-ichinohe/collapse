@@ -97,11 +97,11 @@ function loadFile(){
 }
 
 function noGuidance(){
-    elem("next0").className="invisible";
-    elem("next1").className="invisible";
-    elem("next2").className="invisible";
-    elem("next3").className="invisible";
-    elem("next4").className="invisible";
+    elem("next_chap1").className="invisible";
+    elem("next_chap2").className="invisible";
+    elem("next_chap3").className="invisible";
+    elem("next_chap4").className="invisible";
+    elem("next_chap5").className="invisible";
 }
 
 function openclose(btn){
