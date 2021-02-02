@@ -1,34 +1,75 @@
+/* Declaration */
 var ga={},gas=[];
-var plot1,plot2,plot3,plot4,plot5,plot6,plot7,plot8,plot9,plot10,plot11;
-var sint1,sint2,sint3,sint4,sint51,sint52;
-var chap4table=["<tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr>"];
-var chap5table=["<tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr>"];
+var plot10,plot11,plot12,plot20,plot21,plot30,plot20,plot20,plot21,plot22,plot30,plot40;
+var sint,sint,sint3,sint4,sint,sint42;
+var chap3table=["<tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr>"];
+var chap4table=["<tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr>"];
 var metroColors=["#f39700","#e60012","#9caeb7","#00a7db","#009944","#d7c447","#9b7cb6","#00ada9","#bb641d"];
 var developColors=["#9fc4e7","#c2ddb6","#f8cb9c","#ff7f7f"];
+var idaresult=[],cyclic_data;
 
-window.onload=()=>{
-    elem("plot7range").addEventListener('input',(event)=>elem("plot7amp").value=event.target.value);
+/* EventListener */
+for(const key of ["chap3","chap4"]){ 
+    elem("range_"+key).addEventListener("input",(event)=>elem("num_"+key).value=event.target.value);
 }
 
-function paramSet(str,par){
-    if(str==="lambda"){
-        setting.system.ls=par;
-        setting.system.lc=par;
-        setting.system.la=par;
-        setting.system.lk=par;
-    }else if(str==="dp"){
-        setting.system.dp=par;
-        setting.system.dpc=(1+setting.system.as*setting.system.dp)/setting.system.ac;
-        setting.system.du=setting.system.dp*1+setting.system.dpc*1+1;   
-    }else if(str==="as"){
-        setting.system.as=par;    
-    }else if(str==="ac"){
-        setting.system.ac=par;
-        setting.system.dpc=(1+setting.system.as*setting.system.dp)/setting.system.ac;
-        setting.system.du=setting.system.dp*1+setting.system.dpc*1+1;   
+/*
+ clough */
+elem("clough_au").addEventListener("input",(event)=>{
+    setting.system.au=Number(event.target.value);
+    showHyste("plot20");
+});
+elem("clough_se").addEventListener("input",(event)=>{
+    setting.system.se=setting.system.fy[0]/Number(event.target.value)/setting.system.h[0];
+    showHyste("plot20");
+});
+
+/* imk */
+for(const key of ["ls","lc","lk","la","as","Res","dt0","ddu"]){
+    if(["ls","lc","lk","la"].includes(key)){
+        elem("imk_"+key).addEventListener("input",(event)=>{
+            setting.system[key]=100*1.3**(Number(event.target.value)-5);
+            showHyste("plot21");
+        });
+    }else if(["as","Res","dt0","ddu"].includes(key)){
+        elem("imk_"+key).addEventListener("input",(event)=>{
+            setting.system[key]=Number(event.target.value);
+            showHyste("plot21");
+        });
     }
 }
-
+elem("imk_pin_force").addEventListener("input",(event)=>{
+    setting.system.Ap=setting.system.Ap[0]*Number(event.target.value)/setting.system.Fpr[0];
+    setting.system.Fpr=Number(event.target.value);
+    showHyste("plot21");
+});
+elem("imk_pin_stiff").addEventListener("input",(event)=>{
+    setting.system.Ap=setting.system.Fpr[0]-Number(event.target.value);
+    showHyste("plot21");
+});
+elem("imk_ac").addEventListener("input",(event)=>{
+    setting.system.dpc=(1+setting.system.as*setting.system.dp)*Number(event.target.value);
+    showHyste("plot21");
+});
+/* multi */
+elem("multi_lambda").addEventListener("input",(event)=>{
+    setting.system.lambda[0]=100*1.3**(Number(event.target.value)-5);
+    showHyste("plot22");
+});
+elem("multi_lk").addEventListener("input",(event)=>{
+    setting.system.lambda[1]=100*1.3**(Number(event.target.value)-5);
+    showHyste("plot22");
+});
+elem("multi_pin_force").addEventListener("input",(event)=>{
+    setting.system.Ap=setting.system.Ap*Number(event.target.value)/setting.system.Fpr;
+    setting.system.Fpr=Number(event.target.value);
+    showHyste("plot22");
+});
+elem("multi_pin_stiff").addEventListener("input",(event)=>{
+    setting.system.Ap=setting.system.Fpr[0]-Number(event.target.value);
+    showHyste("plot22");
+});
+/* Page Function */
 function elem(id){
     return document.getElementById(id);
 }
@@ -43,8 +84,43 @@ const openFile=()=>{
         gas=jsonData;
     });
 }
-
 openFile();
+
+function loadFile(){
+    var file=elem("jsonfile").files[0];
+    var reader=new FileReader();
+    reader.onload=(event)=>{
+        gas=JSON.parse(reader.result);
+        ga=gm_random(1);
+    }
+    reader.readAsText(file);
+}
+
+function noGuidance(){
+    elem("next0").className="invisible";
+    elem("next1").className="invisible";
+    elem("next2").className="invisible";
+    elem("next3").className="invisible";
+    elem("next4").className="invisible";
+}
+
+function openclose(btn){
+    let targetId=btn.getAttribute("href").slice(1);
+    if(targetId.startsWith("button")){
+        targetId=targetId.slice(7,12);
+        elem(targetId).className="";
+        elem("next_"+targetId).className='invisible';
+        elem("download_link").href="#button_"+targetId;
+        elem("download_link").click();
+    }else if(targetId.startsWith("description")){
+        if  (elem(targetId).className==="invisible") elem(targetId).className="text-left";
+        else elem(targetId).className="invisible";    
+    }else{
+        if  (elem(targetId).className==="invisible") elem(targetId).className="";
+        else elem(targetId).className="invisible";
+    }
+    return false;
+}
 
 function gm_random(n){
     let gmset;
@@ -63,22 +139,148 @@ function gm_random(n){
     return gmset;
 }
 
+function po_pinch_selector(char){
+    if(elem(char+"_fpr").className===""){
+        elem(char+"_fpr").className="hidden";
+        elem(char+"_ap").className="hidden";
+        if(char==="imk"){
+            setting.system.md=31;
+        }else if(char==="multi"){
+            setting.system.md=41;
+            setting.system.Fpr=0.001;
+            setting.system.Ap=1;
+        }
+    }else if(elem(char+"_fpr").className==="hidden"){
+        elem(char+"_fpr").className="";
+        elem(char+"_ap").className="";
+        if(char==="imk"){
+            setting.system.md=32;
+        }else if(char==="multi"){
+            setting.system.md=41;
+            if(setting.system.Fpr==0.001) setting.system.Fpr=0.3;
+        }
+    }
+    setting2slider();
+}
+
+function temp_selector(char){
+    setting=setter(1);
+    if(char==="clough"){
+        setting.system.md=12;
+    }else if(char==="imk"){
+        setting.system.md=31;
+    }else if(char="multi"){
+        setting.system.md=41;
+        setting.system.Ap=1;
+        setting.system.Fpr=0.001;
+    }
+    setting2slider();
+}
+
+function setting2slider(){
+    elem("clough").className="invisible";
+    elem("imk").className="invisible";
+    elem("multi").className="invisible";    
+    if(setting.system.md==12){
+        elem("clough").className="";
+        elem("clough_au").value=String(setting.system.au[0]);
+        elem("clough_se").value=String(setting.system.se[0]*setting.system.h[0]/setting.system.fy[0]);
+        showHyste("plot20");
+    }else if(setting.system.md==31||setting.system.md==32){
+        elem("imk").className="";
+        if(setting.system.md==31){
+            elem("imk_fpr").className="hidden";
+            elem("imk_ap").className="hidden";
+        }else if(setting.system.md==32){
+            elem("imk_fpr").className="";
+            elem("imk_ap").className="";
+        }
+        for(const key of ["ls","lc","lk","la","as","Res","dt0","ddu"]){
+            if(["ls","lc","lk","la"].includes(key)){
+                elem("imk_"+key).value=String(5+Math.log(setting.system[key]/100)/Math.log(1.3));
+            }else if(["as","Res","dt0","ddu"].includes(key)){
+                elem("imk_"+key).value=String(setting.system[key]);
+            }
+        }
+        elem("imk_pin_force").value=String(setting.system.Fpr[0]);
+        elem("imk_pin_stiff").value=String(setting.system.Fpr[0]-setting.system.Ap[0]);
+        elem("imk_ac").value=String(setting.system.dpc[0]/(1+setting.system.as[0]*setting.system.dp[0]));
+        const dy=setting.system.My[0]/setting.system.h[0]/setting.system.se[0]*100;
+        slider.imk.noUiSlider.set([String(dy),String(dy*(setting.system.dp[0]+1))]);
+    }else if(setting.system.md==41){
+        elem("multi").className="";
+        if(setting.system.Fpr==0.001){
+            elem("multi_fpr").className="hidden";
+            elem("multi_ap").className="hidden";   
+        }else{
+            elem("multi_fpr").className="";
+            elem("multi_ap").className="";
+        }
+        elem("multi_lambda").value=String(5+Math.log(setting.system.lambda[0]/100)/Math.log(1.3));
+        elem("multi_lk").value=String(5+Math.log(setting.system.lambda[1]/100)/Math.log(1.3));
+        elem("multi_pin_force").value=String(setting.system.Fpr);
+        elem("multi_pin_stiff").value=String(setting.system.Fpr-setting.system.Ap);
+        let tr=[[],[]];
+        setting.system.force.forEach((val,idx)=>{
+            tr[0][idx]="<td>f"+String(idx)+"</td>";
+            tr[1][idx]="<td><input type=range id=multi_f"+String(idx)+" min=0.01 max=1.5 step=0.01 class=vertical value="+String(val)+"></td>";
+        });
+        tr=tr.map((val)=>{
+            val.unshift("<tr>");
+            val.push("</tr>");
+            val=val.join("");
+            return val;
+        });
+        tr.unshift("<table>");
+        tr.push("</table>");
+        elem("multi_force_slider").innerHTML=tr.join("");
+        setting.system.force.forEach((val,idx)=>{
+            elem("multi_f"+String(idx)).addEventListener("input",()=>{
+                setting.system.force[idx]=Number(elem("multi_f"+String(idx)).value);
+                showHyste("plot22");
+            });
+        });
+        slider.multi.noUiSlider.destroy();
+        noUiSlider.create(slider.multi,{
+            start:setting.system.disp.map(val=>val*100),
+            step:0.2,
+            margin:0.2,
+            range:{
+                min:0.6,
+                max:15,
+            },
+        });
+        slider.multi.noUiSlider.on("update",(values)=>{
+            setting.system.disp=values.map(val=>Number(val)/100);
+            showHyste("plot22");
+        });
+    }
+}
+
+/* Chapter Function */
 function Chapter1(){
-    elem("chap1progress").value=0;
+    button_switch("chap1","start");
+    elem("progress_chap1").value=0;
     ga=gm_random(1);
     const system=vector(setting.system),control=setting.control;
     control.amp=0.6;
     const result=sdf(system,ga,control);
-    const dt=ga.dt,dspmat=[arrSca(result.dsp,1/system.h)],gacc=result.gacc;
-    if(sint1) clearInterval(sint1);
-    if(plot1) plot1.destroy();
-    if(plot2) plot2.destroy();
-    let label1=dspmat.map((val,idx)=>String(idx+1));
-    let dsp=transpose(dspmat);
-    dsp[0].unshift(0);
-    label1.unshift("0");
+    const dt=ga.dt,dspmat=[result.dsp.map(val=>val/system.h)],gacc=result.gacc;
+    if(sint) clearInterval(sint);
+    if(plot10) plot10.destroy();
+    if(plot11) plot11.destroy();
     const gaccMax=gacc.reduce((acc,cur)=>Math.max(acc,cur));
-    plot1=new Chart(elem("plot1"),{
+    let label1=dspmat.map((val,idx)=>String(idx+1));
+    label1.unshift("0");
+    const dsp=transpose(dspmat).map((val)=>{
+        val.unshift(0);
+        return val;
+    });
+    cyclic_data={
+        data:result.dsp.map((val,idx)=>{return {x:val/system.h[0],y:result.frc[idx]/system.My[0]}}),
+        dt:dt,
+    };
+    plot10=new Chart(elem("plot10"),{
         type:'line',
         data:{
             labels:label1,
@@ -93,14 +295,14 @@ function Chapter1(){
             scales:{
                 yAxes:[{
                     ticks:{
-                        max:0.132,
-                        min:-0.132,
+                        max:0.07,
+                        min:-0.07,
                     }
                 }]
             }
         }
     });
-    plot2=new Chart(elem("plot2"),{
+    plot11=new Chart(elem("plot11"),{
         type:'scatter',
         data:{
             datasets:[{
@@ -134,54 +336,55 @@ function Chapter1(){
     });
     const begin=performance.now();
     let i=1,color=0;
-    sint1=setInterval(()=>{
-        elem("chap1progress").value=i/(dsp.length-1);
+    sint=setInterval(()=>{
+        elem("progress_chap1").value=i/(dsp.length-1);
         if(i>dsp.length-1){
             console.log(performance.now()-begin);
-            clearInterval(sint1);
+            button_switch("chap1","stop");
         }else{
-            if(dsp[i].length<dsp[0].length) dsp[i].unshift(0);
-            plot1.data.datasets[0].data=dsp[i];
-            if(Math.abs(dsp[i][1])<0.01) color=0;
-            else if(Math.abs(dsp[i][1])<(1+system.dp[0])*0.01) color=1;
+            plot10.data.datasets[0].data=dsp[i];
+            if(Math.abs(dsp[i][1]-dsp[i][0])<0.01) color=0;
+            else if(Math.abs(dsp[i][1]-dsp[i][0])<(1+system.dp[0])*0.01) color=1;
             else if(result.frc[i]!=0) color=2;
             else color=3;
-            plot1.data.datasets[0].backgroundColor=developColors[color];
-            plot2.options.scales.xAxes[0].ticks={max:dt*i,min:dt*i-4};
-            plot1.update();
-            plot2.update();
+            plot10.data.datasets[0].backgroundColor=developColors[color];
+            plot11.options.scales.xAxes[0].ticks={max:dt*i,min:dt*i-4};
+            plot10.update();
+            plot11.update();
             i=Math.floor((performance.now()-begin)/dt/1000);   
         } 
     },1);
 }
 
-function Chapter2(){
-    elem("chap2progress").value=0;
-    setting.system.md=12;
-    const system=vector(setting.system);
-    const property=system_property(system);
-    setting.system.md=31;
-    let hyst=property.hyst[0];
-    if(!hyst.du) hyst.du=system.du[0]*hyst.dy;
-    let result={dsp:[],frc:[0]};
-    for(let t=0; t<600*Math.floor(system.du[0]-1); t++) result.dsp.push(Math.floor(2+t/600)*Math.sin(t*Math.PI/100)*hyst.dy/2);
-    let hctrl=property.hctrl[0];
-    hctrl.ss=property.ss[0];
-    hctrl.ff=result.frc[0];
-    for(let i=0; i<result.dsp.length-1; i++){
-        hctrl=restoring_force(hctrl.ss,result.dsp[i],result.dsp[i+1],hctrl.ff,hyst,hctrl);
-        result.frc[i+1]=hctrl.ff;
+function result2animation(data,char,dt){
+    if(char==="plot30"){
+        elem("progress_chap3").value=0;
+    }else{
+        elem("progress_chap2").className="";
+        elem("progress_chap2").value=0;
     }
-    const dsp=arrSca(result.dsp,1/system.h),frc=arrSca(result.frc,1/system.fy);
-    if(sint2) clearInterval(sint2);
-    if(plot3) plot3.destroy();
-    if(plot4) plot4.destroy();
-    const data=dsp.map((v,j)=>{return {x:v,y:frc[j]}});
-    plot3=new Chart(elem("plot3"),{
+    if(char==="chap2"){
+        elem("clough").className="invisible";
+        elem("imk").className="invisible";
+        elem("multi").className="invisible";    
+        if(setting.system.md==12){
+            char="plot20";
+            elem("clough").className="";
+        }else if(setting.system.md==31||setting.system.md==32){
+            char="plot21";
+            elem("imk").className="";
+        }else if(setting.system.md==41){
+            char="plot22";
+            elem("multi").className="";
+        } 
+    }
+    button_switch(char,"start");
+    if(sint) clearInterval(sint);
+    const plot_setting={
         type:'scatter',
         data:{
             datasets:[{
-                label:"Clough(Non-Deteriorating) Model",
+                label:"Displacement vs. Force",
                 type:'line',
                 lineTension:0,
                 data:[data[0]],
@@ -189,6 +392,7 @@ function Chapter2(){
                 borderColor:"#000000",
                 borderJoinStyle:'round',
                 borderCapStyle:'round',
+                fill:true,
             }],
         },
         options:{
@@ -208,132 +412,98 @@ function Chapter2(){
                 }],
             }
         }
-    });
-    plot4=new Chart(elem("plot4"),{
-        type:'scatter',
-        data:{
-            datasets:[{
-                label:"Inputted Displacement",
-                type:'line',
-                lineTension:0,
-                data:dsp.map((v,j)=>{return {x:j,y:v}}),
-                pointRadius:0,
-                borderColor:"#000000",
-            }],
-        },
-        options:{
-            animation:false,
-            scales:{
-                xAxes:[{
-                    ticks:{
-                        max:0,
-                        min:-3600,
-                    }
-                }],
-                yAxes:[{
-                    ticks:{
-                        max:0.07,
-                        min:-0.07,
-                    }
-                }],
-            }
-        }
-    });
+    };
+    if(char==="plot20"){
+        if(plot20) plot20.destroy();
+        plot20=new Chart(elem(char),plot_setting);
+    }else if(char==="plot21"){
+        if(plot21) plot21.destroy();
+        plot21=new Chart(elem(char),plot_setting);
+    }else if(char==="plot22"){
+        if(plot22) plot22.destroy();
+        plot22=new Chart(elem(char),plot_setting);
+    }else if(char==="plot30"){
+        if(plot30) plot30.destroy();
+        plot30=new Chart(elem(char),plot_setting);
+    }
     const begin=performance.now();
     let i=1;
-    sint2=setInterval(()=>{
-        elem("chap2progress").value=i/(dsp.length-1);
-        if(i>dsp.length-1){
-            plot3.data.datasets[0].fill=false;
-            plot3.update();
+    sint=setInterval(()=>{
+        if(char==="plot30") elem("progress_chap3").value=i/(data.length-1);
+        else elem("progress_chap2").value=i/(data.length-1);
+        if(i>data.length-1){
             console.log(performance.now()-begin);
-            clearInterval(sint2);
-        }else{
-            plot3.data.datasets[0].data=data.slice(0,i);
-            plot4.options.scales.xAxes[0].ticks={max:i,min:i-3600};
-            plot3.update();
-            plot4.update();
-            i=Math.floor((performance.now()-begin)*7.2/10);
-        }
-    },0.0001);
-}
-
-function Chapter3(){
-    elem("chap3progress").value=0;
-    const system=vector(setting.system);
-    const property=system_property(system);
-    let hyst=property.hyst[0];
-    if(!hyst.du) hyst.du=system.du[0]*hyst.dy;
-    let result={dsp:[],frc:[0]};
-    for(let t=0; t<600*Math.floor(system.du[0]-1); t++) result.dsp.push(Math.floor(2+t/600)*Math.sin(t*Math.PI/100)*hyst.dy/2);
-    let hctrl=property.hctrl[0];
-    hctrl.ss=property.ss[0];
-    hctrl.ff=result.frc[0];
-    for(let i=0; i<result.dsp.length-1; i++){
-        hctrl=restoring_force(hctrl.ss,result.dsp[i],result.dsp[i+1],hctrl.ff,hyst,hctrl);
-        result.frc[i+1]=hctrl.ff;
-    }
-    const dsp=arrSca(result.dsp,1/system.h),frc=arrSca(result.frc,1/system.My);
-    if(sint3) clearInterval(sint3);
-    if(plot5) plot5.destroy();
-    const data=dsp.map((v,j)=>{return {x:v,y:frc[j]}});
-    plot5=new Chart(elem("plot5"),{
-        type:'scatter',
-        data:{
-            datasets:[{
-                label:"IMK-Peak-Oriented Model (with Deterioration)",
-                type:'line',
-                lineTension:0,
-                data:[data[0]],
-                pointRadius:0,
-                borderColor:"#000000",
-                borderJoinStyle:'round',
-                borderCapStyle:'round',
-            }],
-        },
-        options:{
-            animation:false,
-            scales:{
-                xAxes:[{
-                    ticks:{
-                        max:0.07,
-                        min:-0.07,
-                    }
-                }],
-                yAxes:[{
-                    ticks:{
-                        max:1.5,
-                        min:-1.5,
-                    }
-                }],
+            if(char==="plot30"){
+                plot30.data.datasets[0].fill=false;
+                plot30.update();
+            }else{
+                if(char==="plot20"){
+                    plot20.data.datasets[0].fill=false;
+                    plot20.update();
+                }else if(char==="plot21"){
+                    plot21.data.datasets[0].fill=false;
+                    plot21.update();
+                }else if(char==="plot22"){
+                    plot22.data.datasets[0].fill=false;
+                    plot22.update();
+                }
+                elem("progress_chap2").className="hidden";
             }
-        }
-    });
-    const begin=performance.now();
-    var i=1;
-    sint3=setInterval(()=>{
-        elem("chap3progress").value=i/(dsp.length-1);
-        if(i>dsp.length-1){
-            plot5.data.datasets[0].fill=false;
-            plot5.update();
-            console.log(performance.now()-begin);
-            clearInterval(sint3);
+            button_switch(char,"stop");
         }else{
-            plot5.data.datasets[0].data=data.slice(0,i);
-            plot5.update();
-            i=Math.floor((performance.now()-begin)*7.2/10);
-        }
+            let color=0;
+            if(Math.abs(data[i].x)<0.01) color=0;
+            else if(Math.abs(data[i].x)<(1+setting.system.dp[0])*0.01) color=1;
+            else if(data[i].y!=0) color=2;
+            else color=3;
+            if(char==="plot20"){
+                plot20.data.datasets[0].backgroundColor=developColors[color];
+                plot20.data.datasets[0].data=data.slice(0,i);
+                plot20.update();
+            }else if(char==="plot21"){
+                plot21.data.datasets[0].backgroundColor=developColors[color];
+                plot21.data.datasets[0].data=data.slice(0,i);
+                plot21.update();
+            }else if(char==="plot22"){
+                plot22.data.datasets[0].backgroundColor=developColors[color];
+                plot22.data.datasets[0].data=data.slice(0,i);
+                plot22.update();
+            }else if(char==="plot30"){
+                plot30.data.datasets[0].backgroundColor=developColors[color];
+                plot30.data.datasets[0].data=data.slice(0,i);
+                plot30.update();
+            }
+            i=Math.floor((performance.now()-begin)/dt/1000);   
+        } 
     },1);
 }
 
-function Chapter31(){
+function button_switch(char,order){
+    if(order==="stop"){
+        elem(char+"_anime").className=elem(char+"_stop").className;
+        elem(char+"_stop").className="invisible";
+        elem("progress_chap2").className="hidden";
+        clearInterval(sint);
+    }else if(order==="start"){
+        for(const key of ["chap1","plot20","plot21","plot22","plot30"]){
+            if(elem(key+"_stop").className!=="invisible"){
+                elem(key+"_anime").className=elem(key+"_stop").className;
+                elem(key+"_stop").className="invisible";   
+            }
+        } 
+        elem(char+"_stop").className=elem(char+"_anime").className;
+        elem(char+"_anime").className="invisible";
+    }
+}
+
+function setting2cyclic(){
     const system=vector(setting.system);
     let property=system_property(system);
     let hyst=property.hyst[0];
-    if(!hyst.du) hyst.du=system.du[0]*hyst.dy;
+    if(!hyst.du) hyst.du=[0,(system.du[0]+system.dp[0]+system.dpc[0]+1)*hyst.dy];
     let result={dsp:[[],[]],frc:[[0],[0]]};
-    for(let t=0; t<600*Math.floor(system.du[0]-1); t++) result.dsp[0].push(Math.floor(2+t/600)*Math.sin(t*Math.PI/100)*hyst.dy/2);
-    for(let i=0; i<hyst.du[1]*1.1; i+=hyst.dy/100) result.dsp[1].push(i);
+    for(let t=0; t<600*0.08/hyst.dy*system.h[0]; t++) result.dsp[0].push(Math.floor(2+t/300)*Math.sin(t*Math.PI/100)*hyst.dy/2);
+    for(let i=0; i<0.08*system.h[0]; i+=hyst.dy/100) result.dsp[1].push(i);
     let datasets=[];
     const labels=["Cyclic","Monotonic"];
     result.dsp.forEach((val,idx)=>{
@@ -344,12 +514,13 @@ function Chapter31(){
             data:[{x:0,y:0}],
             pointRadius:0,
             fill:false,
-            borderColor:"#000000",
+            borderColor:metroColors[1+2*idx],
             borderJoinStyle:'round',
             borderCapStyle:'round',
         };
-        property=system_property(system);
-        hyst=property.hyst[0];
+        const system=vector(setting.system);
+        const property=system_property(system);
+        const hyst=property.hyst[0];
         let hctrl=property.hctrl[0];
         hctrl.ss=property.ss[0];
         hctrl.ff=0;
@@ -359,8 +530,16 @@ function Chapter31(){
             datasets[idx].data[i+1]={x:val[i+1]/system.h,y:hctrl.ff/system.My};
         }
     });
-    if(plot6) plot6.destroy();
-    plot6=new Chart(elem("plot6"),{
+    cyclic_data={
+        data:datasets[0].data,
+        dt:0.001,
+    }
+    return datasets;
+}
+
+function showHyste(char){
+    const datasets=setting2cyclic();
+    const plot_setting={
         type:'scatter',
         data:{
             datasets:datasets,
@@ -382,91 +561,56 @@ function Chapter31(){
                 }],
             }
         }
-    });
+    };
+    if(char==="plot20"){
+        if(plot20) plot20.destroy();
+        plot20=new Chart(elem(char),plot_setting);
+    }else if(char==="plot21"){
+        if(plot21) plot21.destroy();
+        plot21=new Chart(elem(char),plot_setting);
+    }else if(char==="plot22"){
+        if(plot22) plot22.destroy();
+        plot22=new Chart(elem(char),plot_setting);
+    }
+}
+
+function Chapter3(){
+    elem("progress_chap3").value=0;
+    const system=vector(setting.system);
+    let control=setting.control;
+    control.amp=Number(elem("num_chap3").value);
+    if(!control.amp||control.amp===0){
+        control.amp=1.0;
+        elem("num_chap3").value="1.0";
+    }
+    elem("range_chap3").value=elem("num_chap3").value;
+    const result=sdf(system,ga,control);
+    chap3table.push(["<tr><th>",String(chap3table.length),".</th><td>",ga.name,"</td><td>",String(control.amp),"</td><td>",result.collapse,"</td></tr>"].join(""));
+    let table3=chap3table.map(val=>val);
+    table3.unshift("<table class=table_result>");
+    table3.push("</table>");
+    elem("table_chap3").innerHTML=table3.join("");
+    setting.control.amp=0.6;
+    const data=result.dsp.map((val,idx)=>{return {x:val/system.h[0],y:result.frc[idx]/system.My[0]}});
+    result2animation(data,"plot30",ga.dt);
 }
 
 function Chapter4(){
-    elem("chap4progress").value=0;
-    const system=vector(setting.system);
-    let control=setting.control;
-    control.amp=Number(elem("plot7amp").value);
-    if(!control.amp||control.amp===0){
-        control.amp=1.0;
-        elem("plot7amp").value="1.0";
-    }
-    elem("plot7range").value=elem("plot7amp").value;
-    const result=sdf(system,ga,control);
-    chap4table.push(["<tr><th>",String(chap4table.length),".</th><td>",ga.name,"</td><td>",String(control.amp),"</td><td>",result.collapse,"</td></tr>"].join(""));
-    let table4=chap4table.map(val=>val);
-    table4.unshift("<table>");
-    table4.push("</table>");
-    elem("chap4table").innerHTML=table4.join("");
-    setting.control.amp=0.6;
-    const dt=ga.dt,dspmat=[arrSca(result.dsp,1/system.h)];
-    if(sint4) clearInterval(sint4);
-    if(plot7) plot7.destroy();
-    let label1=dspmat.map((val,idx)=>String(idx+1));
-    let dsp=transpose(dspmat);
-    dsp[0].unshift(0);
-    label1.unshift("0");
-    plot7=new Chart(elem("plot7"),{
-        type:'line',
-        data:{
-            labels:label1,
-            datasets:[{
-                label:"Displacement",
-                data:dsp[0],   
-                borderColor:"#000000", 
-            }],
-        },
-        options:{
-            animation:false,
-            scales:{
-                yAxes:[{
-                    ticks:{
-                        max: system.du*system.My/system.se/system.h,
-                        min:-system.du*system.My/system.se/system.h,
-                    }
-                }]
-            }
-        }
-    });
-    let begin=performance.now();
-    let i=1,color=0;
-    sint4=setInterval(()=>{
-        elem("chap4progress").value=i/(dsp.length-1);
-        if(i>dsp.length-1){
-            console.log(performance.now()-begin);
-            clearInterval(sint4);
-        }else{
-            if(dsp[i].length<dsp[0].length) dsp[i].unshift(0);
-            if(Math.abs(dsp[i][1])<0.01) color=0;
-            else if(Math.abs(dsp[i][1])<(1+system.dp[0])*0.01) color=1;
-            else if(result.frc[i]!=0) color=2;
-            else color=3;
-            plot7.data.datasets[0].backgroundColor=developColors[color];
-            plot7.data.datasets[0].data=dsp[i];
-            plot7.update();
-            i=Math.floor((performance.now()-begin)/dt/1000);
-        }    
-    },0.01);
-}
-
-function Chapter5(){
-    elem("chap5progress").value=0;
-    let n=Number(elem("plot8no").value);
+    elem("progress_chap4").value=0;
+    let n=Number(elem("num_chap4").value);
     if(!n||n===0){
         n=5;
-        elem("plot8no").value="5";
+        elem("num_chap4").value="5";
     }
+    elem("range_chap4").value=elem("num_chap4").value;
+    console.log(n);
     const perbegin=performance.now();
-    if(sint51) clearInterval(sint51);
-    if(sint52) clearInterval(sint52);
+    if(sint) clearInterval(sint);
+    if(sint42) clearInterval(sint42);
     const system=vector(setting.system);
     let control=setting.control;
     const gmset=gm_random(n);
-    if(plot8) plot8.destroy();
-    plot8=new Chart(elem("plot8"),{
+    const plot_Setting={
         type:'scatter',
         data:{
             datasets:[{
@@ -479,11 +623,12 @@ function Chapter5(){
             }],
         },
         options:{
+            legend:false,
             animation:false,
             scales:{
                 xAxes:[{
                     ticks:{
-                        max:0.455,
+                        max:0.15,
                         min:0.0,
                     }
                 }],
@@ -495,11 +640,13 @@ function Chapter5(){
                 }],
             }
         }
-    });
-    const sdfida=async(gm,idx,system,control,plot8)=>{
+    };
+    if(plot40) plot40.destroy();
+    plot40=new Chart(elem("plot40"),plot_Setting);
+    const sdfida=async(gm,idx,system,control,plot)=>{
         control.tend=gm.dt*gm.acc.length;
-        plot8.data.datasets[idx]={
-            label:gm.name,
+        plot.data.datasets[idx]={
+            //label:gm.name,
             type:'line',
             lineTension:0,
             data:[{x:0,y:0}],
@@ -510,48 +657,49 @@ function Chapter5(){
         };
         let supamp=5.8,supdef=0,itr=0,infamp=0;   
         const interv1=()=>new Promise(resolve=>{ 
-            sint51=setInterval(()=>{
+            sint=setInterval(()=>{
                 control.amp=0.2+itr*0.1;
-                if(itr>30) clearInterval(si);
+                if(itr>30) clearInterval(sint);
                 const result=sdf(system,gm,control);
-                const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)));
-                if(defmax>system.du*system.My/system.se){
+                const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)))/system.h[0];
+                if(defmax>0.25||result.collapse==="Collapse"){
                     supamp=control.amp;
                     supdef=defmax;
                     resolve();
-                    clearInterval(sint51);
+                    clearInterval(sint);
                 }else{
                     infamp=control.amp;
-                    plot8.data.datasets[idx].data.push({x:defmax,y:control.amp});
-                    plot8.update();  
+                    plot.data.datasets[idx].data.push({x:defmax,y:control.amp});
+                    plot.update();  
                     itr++;          
                 }
             },1);
         });
         const interv2=()=>new Promise(resolve=>{
-            sint52=setInterval(()=>{
+            sint42=setInterval(()=>{
                 if((supamp-infamp)<0.001){
                     resolve();
-                    clearInterval(sint52);
+                    clearInterval(sint42);
                 }else{
                     control.amp=(infamp+supamp)/2;
                     const result=sdf(system,gm,control);
                     const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)));
-                    if(defmax>system.du*system.My/system.se){
+                    if(defmax>0.15||result.collapse==="Collapse"){
                         supamp=control.amp;
                         supdef=defmax;
                     }else{
                         infamp=control.amp;
-                        plot8.data.datasets[idx].data.push({x:defmax,y:control.amp});
-                        plot8.update(); 
+                        plot.data.datasets[idx].data.push({x:defmax,y:control.amp});
+                        plot.update(); 
                         itr++;          
                     }
                 }
             },1);
         });
         const interv3=()=>new Promise(resolve=>{
-            plot8.data.datasets[idx].data.push({x:supdef,y:supamp});
-            plot8.update();
+            plot.data.datasets[idx].data.push({x:supdef,y:supamp});
+            if(supamp>plot.options.scales.yAxes[0].ticks.max-0.1) plot.options.scales.yAxes[0].ticks.max=supamp+0.1;
+            plot.update();
             resolve(supamp);
         });
         await interv1();
@@ -561,23 +709,29 @@ function Chapter5(){
     let idx=0,ampres=[];
     const start=async ()=>{
         for (const gm of gmset){
-           ampres[idx]=await sdfida(gm,idx,system,control,plot8);
-           elem("chap5progress").value=(idx+1)/gmset.length;
-           idx++;
-           console.log(performance.now()-perbegin);
+            ampres[idx]=await sdfida(gm,idx,system,control,plot40);
+            elem("progress_chap4").value=(idx+1)/gmset.length;
+            idx++;
+            console.log(performance.now()-perbegin);
         }
     }
     start().then(()=>{
         const mean=sum(ampres)/ampres.length;
-        chap5table.push(["<tr><th>",String(gmset.length),"</th><td>",mean.toFixed(3),"</td><td>",Math.sqrt(sum(ampres.map(val=>(val-mean)**2))/ampres.length).toFixed(3),"</td></tr>"].join(""));
-        let table5=chap5table.map(val=>val);
-        table5.unshift("<table>");
-        table5.push("</table>");
-        elem("chap5table").innerHTML=table5.join("");
+        chap4table.push(["<tr><th>",String(gmset.length),"</th><td>",mean.toFixed(3),"</td><td>",Math.sqrt(sum(ampres.map(val=>(val-mean)**2))/ampres.length).toFixed(3),"</td></tr>"].join(""));
+        let table4=chap4table.map(val=>val);
+        table4.unshift("<table class=table_result>");
+        table4.push("</table>");
+        elem("table_chap4").innerHTML=table4.join("");
         setting.control.amp=0.6;
+        idaresult.push({
+            amp:ampres,
+            system:Object.create(setting.system),
+        });
     });
 }
-    
+
+/* Analysis Function */
+const sum=(arr)=>arr.reduce((acc,cur)=>acc+=cur);
 function ones(row,col,num){
     let b=[];
     for(let i=0; i<row; i++){
@@ -588,18 +742,14 @@ function ones(row,col,num){
     return b;
 }
 
-const sum=(arr)=>arr.reduce((acc,cur)=>acc+=cur);
-const arrDot=(arr1,arr2)=>arr1.reduce((acc,val,idx)=>acc*1+val*arr2[idx],0);
-const arrDiv=(arr1,arr2)=>arr1.map((v,i)=>v=v/arr2[i]);
-const arrAdd=(arrarr)=>transpose(arrarr).map(val=>sum(val));
-const matSca=(mat,scal)=>mat.map(data=>data.map(data=>data*scal));
-const arrSca=(arr,scal)=>matSca([arr],scal)[0];
-
 function renamer(hctrl){
     let hctrl1={};
     for(key in hctrl){
-        if(Array.isArray(hctrl[key])) hctrl1[key]=hctrl[key].map(val=>val);
-        else hctrl1[key]=hctrl[key];
+        if(key==="energy") hctrl1[key]=hctrl[key].map(val=>val.map(v=>v));
+        else{
+            if(Array.isArray(hctrl[key])) hctrl1[key]=hctrl[key].map(val=>val);
+            else hctrl1[key]=hctrl[key];
+        }
     }
     return hctrl1;
 }
@@ -639,6 +789,9 @@ function setter(Nst){
         dp:2,
         b0:0,
         ac:0.1,
+        lambda:[100,100],
+        disp:[0.01,0.03,0.132],
+        force:[1.0,1.02,0],
     };
     let control={
         amp:0.6,
@@ -647,8 +800,9 @@ function setter(Nst){
     };
     system.My  =        Ai(system.ms,system.h);
     system.dpc =     (1+system.as*system.dp)/system.ac;
-    system.du  =        system.dp+system.dpc+1;
-    system.se  = arrDiv(arrDiv(system.My,ones(1,Nst,0.01)[0]),system.h);
+    system.ddu  =        0;
+    system.du=(1+system.dp+system.dpc+system.ddu);
+    system.se  = system.My.map((v,i)=>v/system.h[i]/0.01);
     system.fy=system.My;
     system.au=system.as;
     if(Nst===1){
@@ -658,7 +812,10 @@ function setter(Nst){
         system.se=system.se[0];
         system.fy=system.fy[0];
     }
-    return {system:system,control:control};
+    return {
+        system:system,
+        control:control,
+    };
 }
 
 function Ai(ms,h){
@@ -676,128 +833,176 @@ function Ai(ms,h){
 function vector(system){
     const keylist=["Nst","hm","hk"];
     for(key in system){
-        if(keylist.indexOf(key)===-1&&system[key].length===undefined) system[key]=ones(1,system.Nst,system[key])[0];
+        if(!keylist.includes(key)&&system[key].length===undefined) system[key]=ones(1,system.Nst,system[key])[0];
     }
     return system
 }
 
 function system_property(system){
-    let property={}, hyst=[], hctrl=[];
-    property.Nst=system.Nst;
-    property.ms=system.ms;
-    property.bm=system.hm;
-    property.bk=system.hk;
-    property.ss=system.se.map(val=>val);
-    for(let i=0; i<system.Nst;i++){
-        hyst[i]={};
-        hctrl[i]={};
-        hyst[i].md=system.md[i];
-        hyst[i].se=system.se[i];
-        if(hyst[i].md===2) hyst[i].b0=system.b0[i];
-        else if(10<hyst[i].md&&hyst[i].md<20){
-            hyst[i].fy=system.fy[i];
-            hyst[i].dy=hyst[i].fy/hyst[i].se;
-            switch(hyst[i].md){
+    let hyst=[], hctrl=[];
+    let property={
+        Nst:system.Nst,
+        ms:system.ms,
+        bm:system.hm,
+        bk:system.hk,
+        ss:system.se.map(val=>val),
+    };
+    system.md.forEach((val,idx)=>{
+        hctrl[idx]={};
+        if(val===2){
+            hyst[idx]={
+                md:val,
+                se:system.se[idx],
+                b0:system.b0[idx],
+            };
+        }else if(10<val&&val<20){
+            hyst[idx]={
+                md:val,
+                se:system.se[idx],
+                fy:system.fy[idx],
+                dy:system.fy[idx]/system.se[idx],
+            };
+            switch(val){
                 case 11:
                 case 12:
-                    hyst[i].su=hyst[i].se*system.au[i];
-                    hyst[i].sy=hyst[i].se;
+                    hyst[idx].su=hyst[idx].se*system.au[idx];
+                    hyst[idx].sy=hyst[idx].se;
                 case 13:
-                    hyst[i].b0=system.b0[i];
+                    hyst[idx].b0=system.b0[idx];
                 default: ;
             }
-        }else if(20<hyst[i].md&&hyst[i].md<29){
-            hyst[i].se=hyst[i].se/system.ay[i];
-            hyst[i].fc=system.fc[i];
-            hyst[i].fy=system.fy[i];
-            hyst[i].dc=hyst[i].fc/hyst[i].se;
-            hyst[i].dy=hyst[i].fy/hyst[i].se/system.ay[i];
-            hyst[i].scy=(hyst[i].fy-hyst[i].fc)/(hyst[i].dy-hyst[i].dc);
-            hyst[i].su=hyst[i].se*system.au[i];
-            switch(hyst[i].md){
+        }else if(20<val&&val<29){
+            hyst[idx]={
+                md:val,
+                se:system.se[idx]/system.ay[idx],
+                fc:system.fc[idx],
+                fy:system.fy[idx],
+                dc:system.fc[idx]/system.se[idx],
+                dy:system.fy[idx]/system.se[idx]/system.ay[idx],
+                su:system.se[idx]*system.aui[idx],
+            };
+            hyst[idx].scy=(hyst[idx].fy-hyst[idx].fc)/(hyst[idx].dy-hyst[idx].dc);
+            switch(val){
                 case 25:
-                    hyst[i].b2=system.b2[i];
-                    hyst[i].b3=system.b3[i];
+                    hyst[idx].b2=system.b2[idx];
+                    hyst[idx].b3=system.b3[idx];
                 case 24:
-                    hyst[i].b0=system.b0[i];
-                    hyst[i].b1=system.b1[i];
+                    hyst[idx].b0=system.b0[idx];
+                    hyst[idx].b1=system.b1[idx];
                 default: ;
             }
-        }else if(hyst[i].md>30){
-            hyst[i].My=system.My[i];
-            hyst[i].sy=system.se[i]+0;
-            hyst[i].dy=hyst[i].My/hyst[i].sy;
-            hyst[i].dp=system.dp[i]*hyst[i].dy;
-            hyst[i].dpc=system.dpc[i]*hyst[i].dy;
-            hyst[i].du=system.du[i]*hyst[i].dy;
-            hyst[i].as=system.as[i];
-            hyst[i].Res=system.Res[i];
-            hyst[i].dt0=system.dt0[i];
-            hyst[i].ls=system.ls[i];
-            hyst[i].lc=system.lc[i];
-            hyst[i].la=system.la[i];
-            hyst[i].lk=system.lk[i];
-            hyst[i].cs=system.cs[i];
-            hyst[i].cc=system.cc[i];
-            hyst[i].ca=system.ca[i];
-            hyst[i].ck=system.ck[i];
-            hyst[i].D=system.D[i];
-            const keylist=["as","My","dp","dpc","Res","du","dt0","D"];
-            for(key of keylist){
-                if(!isNaN(hyst[i][key])){
-                    if(key==="as"||key==="Res"||key==="D") hyst[i][key]=[hyst[i][key],hyst[i][key]];
-                else hyst[i][key]=[-hyst[i][key],hyst[i][key]];        
+        }else if(30<val&&val<40){
+            system.du[idx]=(system.dp[idx]+system.dpc[idx]+system.ddu[idx]+1);
+            hyst[idx]={
+                md:val,
+                My:system.My[idx],
+                sy:system.se[idx],
+                dy:system.My[idx]/system.se[idx],
+                as:system.as[idx],
+                Res:system.Res[idx],
+                ls:system.ls[idx],
+                lc:system.lc[idx],
+                la:system.la[idx],
+                lk:system.lk[idx],
+                cs:system.cs[idx],
+                cc:system.cc[idx],
+                ca:system.ca[idx],
+                ck:system.ck[idx],
+                D:system.D[idx],
+            };
+            hyst[idx].dp=system.dp[idx]*hyst[idx].dy;
+            hyst[idx].dpc=system.dpc[idx]*hyst[idx].dy;
+            hyst[idx].du=system.du[idx]*hyst[idx].dy;
+            hyst[idx].dt0=system.dt0[idx]*hyst[idx].dy;
+            if(val>31){
+                hyst[idx].Fpr=system.Fpr[idx];
+                hyst[idx].Ap=system.Ap[idx];
+            }
+            for(const key of ["as","My","dp","dpc","Res","du","dt0","D","Fpr"]){
+                if(!isNaN(hyst[idx][key])){
+                    if(["as","Res","D","Fpr"].includes(key)) hyst[idx][key]=[hyst[idx][key],hyst[idx][key]];
+                else hyst[idx][key]=[-hyst[idx][key],hyst[idx][key]];        
                 }
             }
-            if(hyst.md>31){
-                hyst[i].Fpr=system.Fpr[i];
-                hyst[i].Ap=system.Ap[i];
-            }
-            hctrl[i].fi = 0;
-            hctrl[i].fri = 0;
-            hctrl[i].ksi = 0;
-            hctrl[i].kui = 0;
-            hctrl[i].dti = 0;
-            hctrl[i].e = [0,0];
-            hctrl[i].ek = [0];
-            hctrl[i].dm = 0;
-            hctrl[i].fm = 0;
-            hctrl[i].d1 = 0;
-            hctrl[i].f1 = 0;
-            hctrl[i].d2 = 0;
-            hctrl[i].d1f = 0;
-            hctrl[i].np = 0;
-            hctrl[i].df = 0;
-            hctrl[i].dy = 0;
+            hctrl[idx]={
+                ll:1,
+                fi:0,
+                fri:0,
+                ksi:0,
+                kui:0,
+                dti:0,
+                e:[0,0],
+                ek:[0],
+                dm:0,
+                fm:0,
+                d1:0,
+                f1:0,
+                d2:0,
+                d1f:0,
+                np:0,
+                df:0,
+                dy:0,
+            };
+        }else if(val===41){
+            hyst[idx]={
+                md:val,
+                lambda:system.lambda,
+                Ap:system.Ap[idx],
+                Fpr:system.Fpr[idx],
+                disp:system.disp.map(val=>val*system.h[idx]),
+                force:system.force.map(val=>val*system.My[idx]),
+            };
+            hyst[idx].disp.push(10);
+            hyst[idx].force.push(0);
+            hyst[idx].dy=hyst[idx].disp[0];
+            hyst[idx].du=Math.max(...hyst[idx].disp)/hyst[idx].dy+system.ddu[idx];
+            system.du[idx]=hyst[idx].du;
+            hctrl[idx]={
+                rule_number:1,
+                ff:0,
+                ss:0,
+                force_hyst:[],
+                disp_hyst:[],
+                unl_stiff:0,
+                energy:[],
+                yield_energy:0,
+                rel_tar_disp:[0,0],
+                rel_tar_force:[0,0],
+                unl_tar_disp:0,
+                unl_init:[0,0],
+                pole:0,
+            };
         }
-        hctrl[i].ll = 1;
-        hctrl[i].fm = [0,0];
-        hctrl[i].dm = [0,0];
-        hctrl[i].s1 = [0,0];
-        hctrl[i].s2 = [0,0];
-        hctrl[i].f0 = 0;
-        hctrl[i].f1 = 0;
-        hctrl[i].f2 = 0;
-        hctrl[i].f3 = 0;
-        hctrl[i].f4 = 0;
-        hctrl[i].f5 = 0;
-        hctrl[i].f6 = 0;
-        hctrl[i].f7 = 0;
-        hctrl[i].f8 = 0;
-        hctrl[i].d0 = 0;
-        hctrl[i].d1 = 0;
-        hctrl[i].d2 = 0;
-        hctrl[i].d3 = 0;
-        hctrl[i].d4 = 0;
-        hctrl[i].d5 = 0;
-        hctrl[i].d6 = 0;
-        hctrl[i].d7 = 0;
-        hctrl[i].d8 = 0;
-        hctrl[i].x0 = 0;
-        hctrl[i].x1 = 0;
-        hctrl[i].x2 = 0;
-        hctrl[i].x3 = 0;
-    }
+        hctrl[idx]=Object.assign(hctrl[idx],{
+            ll:1,
+            fm:[0,0],
+            dm:[0,0],
+            s1:[0,0],
+            s2:[0,0],
+            f0:0,
+            f1:0,
+            f2:0,
+            f3:0,
+            f4:0,
+            f5:0,
+            f6:0,
+            f7:0,
+            f8:0,
+            d0:0,
+            d1:0,
+            d2:0,
+            d3:0,
+            d4:0,
+            d5:0,
+            d6:0,
+            d7:0,
+            d8:0,
+            x0:0,
+            x1:0,
+            x2:0,
+            x3:0,
+        });
+    });
     property.hyst=hyst;
     property.hctrl=hctrl;
     return property;
@@ -822,33 +1027,12 @@ function restoring_force(ss,ds,dd,fs,hyst,hctrl){
         case 32:
             hctrl=imk_pinching(ds,dd,fs,ss,hyst,hctrl);
             break;
+        case 41:
+            hctrl=multi_hysteresis(ds,dd,fs,ss,hyst,hctrl);
+            break;
         default:console.log("error");
     }
     return hctrl;
-}
-
-function spectrum(ga){
-    const h=0.05, TN=4, T0= 0.01, DT=(TN-T0)/1000;
-    const gacc=ga.acc, dt=ga.dt;
-    // let AA=[], T=[];
-    res.t=[];
-    res.aa=[];
-    for(let TT=T0; TT<=TN; TT+=DT){
-        res.t.push(TT);
-        let a=[-gacc[0]], v=[0], d=[0], absa=[Math.abs(gacc[0])];
-        const wn=2*Math.PI/TT, wd=wn*Math.sqrt(1-h**2), ex=Math.exp(-h*wn*dt), sw=Math.sin(wd*dt), cw=Math.cos(wd*dt), h1=h/Math.sqrt(1-h**2), h2=2*h**2-1;
-        const A1=ex*(h1*sw+cw), A2=ex/wd*sw, A3=ex/wn**2*((h1+h2/(wd*dt))*sw+(1+2*h/(wn*dt))*cw)-2*h/(wn**3*dt), A4=-ex/(wn**2*dt)*(h2/wd*sw+2*h/wn*cw)-1/wn**2*(1-2*h/(wn*dt));
-        const B1=-ex*wn/Math.sqrt(1-h**2)*sw, B2=ex*(cw-h1*sw), B3=ex*((h/wn+h2/(wn**2*dt))*(cw-h1*sw)-(1/wn**2+2*h/(wn**3*dt))*(wd*sw+h*wn*cw))+1/(wn**2*dt);
-        const B4=-ex*(h2/(wn**2*dt)*(cw-h1*sw)-2*h/(wn**3*dt)*(wd*sw+h*wn*cw))-1/(wn**2*dt);
-        for(let i=0; i<gacc.length-1; i++){
-            d[i+1]=A1*d[i]+A2*v[i]+A3*gacc[i]+A4*gacc[i+1];
-            v[i+1]=B1*d[i]+B2*v[i]+B3*gacc[i]+B4*gacc[i+1];
-        	a[i+1]=-gacc[i+1]-2*h*wn*v[i+1]-wn**2*d[i+1];
-        	absa[i+1]=Math.abs(a[i+1]+gacc[i+1]);
-        }
-        res.aa.push(Math.max.apply(null,absa));
-    }
-    plot([res.t],[res.aa]);
 }
 
 function sdf(system,ga,control){
@@ -865,13 +1049,13 @@ function sdf(system,ga,control){
         const Me=property.ms[0]+coef5*cv+coef3*property.ss[0];
         const Fe=-property.ms*gacc[i+1]-cv*(vel[i]+coef4*acc[i])-property.ss*(dsp[i]+coef1*vel[i]+coef2*acc[i]);
         let aa=Fe/Me;
-        let err=0, j=0,hctrl_amp={};
-        while(j<5){
+        let err=0,hctrl_amp={};
+        for(let j=0;j<5;j++){
             hctrl_amp=renamer(hctrl);
             dsp[i+1]=dsp[i]+coef1*vel[i]+coef2*acc[i]+coef3*aa;
             if(property.hyst[0].dy) dct[i+1]=dsp[i+1]/property.hyst[0].dy;
-            vel[i+1]=vel[i]+coef4*acc[i]+coef5*aa;
-            hctrl_amp=restoring_force(hctrl_amp.ss,dsp[i],dsp[i+1],frc[i],property.hyst[0],hctrl_amp);
+            vel[i+1]=vel[i]+coef4*acc[i]+coef5*aa; 
+            hctrl_amp=restoring_force(hctrl_amp.ss,dsp[i],dsp[i+1],frc[i],property.hyst[0],hctrl_amp);   
             frc[i+1]=hctrl_amp.ff;
             if(hctrl_amp.ss>0) cv=cm+2*property.bk/w1*hctrl_amp.ss;
             else cv=cm;
@@ -880,16 +1064,66 @@ function sdf(system,ga,control){
             err=Math.abs(acc[i+1]-aa)/(tolr*Math.abs(acc[i+1])+tola);
             if(err<1) break;
             aa=acc[i+1];
-            j++;
         }
-        hctrl=hctrl_amp;
-        // if(1<=err) console.log(t[i]);
+        hctrl=renamer(hctrl_amp);
         if(hctrl.ll===0){
-            collapse="Collapse"
+            collapse="Collapse";
             break;
         }
     }
-    return {t:t,gacc:gacc,acc:absacc,vel:vel,dsp:dsp,dct:dct,frc:frc,collapse:collapse};
+    return {
+        t:t,
+        gacc:gacc,
+        acc:absacc,
+        vel:vel,
+        dsp:dsp,
+        dct:dct,
+        frc:frc,
+        collapse:collapse,
+    };
 }
 
 var setting=setter(1);
+
+var slider={
+    imk:elem("imk_disp_slider"),
+    multi:elem("multi_disp_slider"),
+};
+
+for(const key in slider){
+    noUiSlider.create(slider[key],{
+        start:[1,3],
+        step:0.2,
+        margin:0.2,
+        range:{
+            min:0.2,
+            max:15,
+        },
+    });
+}
+slider.imk.noUiSlider.on("update",(values)=>{
+    setting.system.se=setting.system.My[0]/setting.system.h[0]/Number(values[0])*100;
+    setting.system.dp=Number(values[1])/Number(values[0])-1;
+    showHyste("plot21");
+});
+slider.multi.noUiSlider.on("update",(values)=>{
+    setting.system.disp=values.map(val=>Number(val)/100);
+    showHyste("plot22");
+});
+
+function addHandle(){
+    if(setting.system.disp.length<7){
+        setting.system.force.push(0);
+        setting.system.disp.push(setting.system.disp[setting.system.disp.length-1]+0.01);
+        setting2slider();
+    }else console.log("too many handles");
+}
+
+function removeHandle(){
+    if(setting.system.disp.length>2){
+        setting.system.force.pop();
+        setting.system.disp.pop();
+        setting2slider();
+    }else console.log("Number of handles can't be less than 2.");
+}
+
