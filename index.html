@@ -4,176 +4,405 @@
         <meta charset=utf-8>
         <title>Collapse Analyzer</title>
         <link rel=stylesheet href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
-        <link rel=stylesheet href="collapse.css">
+        <link rel="stylesheet" href=https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.min.css> 
+        <script src=https://cdnjs.cloudflare.com/ajax/libs/noUiSlider/14.6.3/nouislider.js></script>
+        <link rel=stylesheet href="collapse1.css">
     </head>
     <body>
         <div class=header>
+            <input type=file id=jsonfile accept=".json" onChange="loadFile();">
         </div>
         <div class=main>
-            <div class=tabconts>
-                <a href="#chap1">1. Seismic Response Analysis</a><br>
-                <a href="#chap2">2. Hysteresis Model</a><br>
-                <a href="#chap3">3. Ibarra-Medina-Krawinkler Hysteresis Model</a><br>
-                <a href="#chap4">4. Collapse Analysis</a><br>
-                <a href="#chap5">5. Incremental Dynamic Analysis</a><br>
-                <a href="#chap6">6. Conducting IDA</a><br>
-                <a href="#chap7">7. Summary of Result</a><br>
+            <div class=tab>
+                <a class="tab back1" href="#button_chap1" onclick="openclose(this);"></a><br>
+                <a class="tab back2" href="#button_chap2" onclick="openclose(this);"></a><br>
+                <a class="tab back3" href="#button_chap3" onclick="openclose(this);"></a><br>
+                <a class="tab back4" href="#button_chap4" onclick="openclose(this);"></a><br>
+                <a class="tab back5" href="#button_chap5" onclick="openclose(this);"></a><br>
             </div>
-            <div class=contents>
-                <button class=open>1. Seismic Response Analysis</button>
-                <div id=chap1>
-                    <p class=shakePlot><canvas id=plot1 height=400 width=400></canvas></p>
-                    <div class=console>
-                        <button class=execute onclick="Chapter1();">Re Run</button><br>
-                        <button class=execute onclick="clearInterval(sint1)">Stop</button>
-                    </div>
-                    <p class=plot2><canvas id=plot2></canvas></p><br>
-                    <progress value="0" max="1" id="chap1progress"></progress>
-                    <p class=close>
-                        <a href="#chap1">Next</a>
+            <div class=panel_main>
+                <div id=next_chap1 class="panel_next back0">
+                    <h4>
+                        Collapse Analyzerへようこそ<br>
+                    </h4>
+                    <p class=text-left>
+                        　このサイトでは年倒壊確率を算出するために必要な動的漸増解析のフローを一自由度系の振動解析によって追うことが出来ます。
+                        初めての方は上のボタンをクリックして、誘導付きでお進みください。下のボタンをクリックすると、誘導なしでの閲覧が可能です。
                     </p>
+                    <button class="next back1" onclick="openclose(this);Chapter1();" href="#button_chap1">
+                        Chapter 1.<br>
+                        Seismic Response Analysis
+                    </button><br> 
+                    <button class="next back0" onclick="openclose(this);noGuidance();" href="#button_chap1"> 
+                        Without Guidance
+                    </button>   
                 </div>
-                <button class=open>2. Hysteresis Model</button>
-                <div id=chap2>
-                    <p class=plot3><canvas id=plot3 width=400 height=400></canvas></p>
-                    <div class=console>
-                        <button class=execute onclick="Chapter2();">Re Run</button><br>
-                        <button class=execute onclick="clearInterval(sint2)">Stop</button>
+                <button class="open back1 border1" href="#chap1" onclick="openclose(this);" id=button_chap1>1. Seismic Response Analysis</button>
+                <div id=chap1 class=invisible>
+                    <div class=wrapper>
+                        <p class="left plot shake border1"><canvas id=plot10 height=400 width=400></canvas></p>
+                        <div class=right>
+                            <p class="plot thin border1"><canvas id=plot11 height=150 width=400></canvas></p><br>
+                            <progress value="0" max="1" id="progress_chap1"></progress><br>
+                            <button id=chap1_anime class="execute border1 long" onclick="Chapter1();">Re Run</button>
+                            <button id=chap1_stop class="invisible" onclick="button_switch('chap1','stop');">Stop</button>
+                        </div>
                     </div>
-                    <p class=plot4><canvas id=plot4></canvas></p><br>
-                    <progress value="0" max="1" id="chap2progress"></progress>
-                    <p class=close>
-                        <a href="#chap2">Next</a>
-                    </p> 
+                    <a href="#description_chap1" onclick="return openclose(this);" class=text-left>Description</a> 
+                    <p id=description_chap1 class="text-left">
+                        　地震時の建物の挙動を把握する方法の一つに計算機による地震応答解析があります。
+                        この解析は複雑にしようと思えばいくらでも複雑にすることが出来ますが、今回は簡単に建物全体を一つのバネとみなす
+                        一自由度解析をすることにしましょう。<br><br>
+                        　画面の右側には入力されている地震波形が、左側には地震波を受けて揺れるバネが
+                        描かれています。入力倍率*を0.6倍としているので大きく揺れることもありますが、崩壊には至らないはずです。<br><br>
+                        60秒かかるので飽きてきたらStopを押して止めてください。もう一度見たい方はRe Runをどうぞ。毎回入力される地震波が変わり、
+                        建物の揺れ方も変わるはずです。<br><br>
+                        *)ここで用いられている地震波は限界耐力計算の第二種地盤における目標スペクトルにランダム位相、もしくは実地震動位相で適合させた模擬地震動です。
+                    </p>
+                    <div class="panel_next back2" id=next_chap2>
+                        <h4>Next:復元力特性</h4>
+                        <p class=text-left>
+                        　さて、建物全体をひとつのバネとみなした地震応答解析をご覧いただきましたが、このバネの復元力特性についてはまだお話していませんでした。
+                        バネとは基本的に入力された変位に対して、その変位を戻そうとする向きに復元力を発生させますが、微小変位においては変位と力が線形の関係にあるものの
+                        大地震動を受けて変位が拡大すると、その線形の関係が崩れ、段々と複雑な応答を示すようになります。次はこの複雑で多彩な復元力特性に進むことにしますが、
+                        まずは先ほどの一自由度系振動解析における変位ー力関係をアニメーションでご覧いただきましょう。
+                        </p>
+                        <button class="next back2" onclick="openclose(this);result2animation(cyclic_data.data,'chap2',cyclic_data.dt);" href="#button_chap2">
+                            Chapter 2. <br>
+                            Hysteresis Model
+                        </button>                        
+                    </div>
+                    <a href="#chap1" onclick="openclose(this);">Close</a>
                 </div>
-                <button class=open>3. Ibarra-Medina-Krawinkler Hysteresis Model</button>
-                <div id=chap3>
-                    <p><canvas id=plot5 width=400 height=400></canvas></p>
-                    <progress value="0" max="1" id="chap3progress"></progress><br>
-                    <button class=execute onclick="Chapter3();">Re Run</button>
-                    <button class=execute onclick="clearInterval(sint3)">Stop</button>
-                    <p><canvas id=plot6 width=400 height=400></canvas></p>
-                    <table>
-                        <tr>
-                            <th><button class=Selector onclick="paramSet('lambda',100);Chapter31();">Lambda</button></th>
-                            <td><button class=Selector onclick="paramSet('lambda',25);Chapter31();">25</button></td>
-                            <td><button class=Selector onclick="paramSet('lambda',50);Chapter31();">50</button></td>
-                            <td><button class=Selector onclick="paramSet('lambda',100);Chapter31();">100</button></td>
-                            <td><button class=Selector onclick="paramSet('lambda',10000);Chapter31();">10000</button></td>
-                        </tr>
-                        <tr>
-                            <th><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">delta_c</button></th>
-                            <td><button class=Selector onclick="paramSet('dp',0.5);Chapter31();">1.5%</button></td>
-                            <td><button class=Selector onclick="paramSet('dp',1.0);Chapter31();">2.0%</button></td>
-                            <td><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">3.0%</button></td>
-                            <td><button class=Selector onclick="paramSet('dp',3.0);Chapter31();">4.0%</button></td>
-                        </tr>
-                        <tr>
-                            <th><button class=Selector onclick="paramSet('as',0.01);Chapter31();">alpha_s</button></th>
-                            <td><button class=Selector onclick="paramSet('as',0.01);Chapter31();">1.0%</button></td>
-                            <td><button class=Selector onclick="paramSet('as',0.03);Chapter31();">3.0%</button></td>
-                            <td><button class=Selector onclick="paramSet('as',0.05);Chapter31();">5.0%</button></td>
-                        </tr>
-                        <tr>
-                            <th><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">alpha_c</button></th>
-                            <td><button class=Selector onclick="paramSet('ac',0.05);Chapter31();">5.0%</button></td>
-                            <td><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">10%</button></td>
-                            <td><button class=Selector onclick="paramSet('ac',0.20);Chapter31();">20%</button></td>
-                        </tr>
-                    </table>   
-                    <button class=execute onclick="setting=setter(1);Chapter31();">Reset</button>
-                    <p class=close>
-                        <a href="#chap3">Next</a>
-                    </p> 
+                <button class="open back2 border2" onclick="openclose(this);" href="#chap2" id=button_chap2>2. Hysteresis Model</button>
+                <div id=chap2 class=invisible>
+                    <div class="invisible" id=clough>
+                        <p>
+                            Clough Model without Deterioration
+                            <button class="execute border2 long" id=plot20_anime onclick="result2animation(cyclic_data.data,'chap2',cyclic_data.dt);">Animate</button>
+                            <button class=invisible id=plot20_stop onclick="button_switch('plot20','stop');">Stop</button>
+                        </p>
+                        <div class=skeleton>
+                            <div>
+                                <p class="plot border2"><canvas id=plot20 width=400 height=400></canvas></p>
+                                <table class=table_vertical>
+                                    <tr><td>as</td></tr>
+                                    <tr><td><input type=range id=clough_au min=0.0 max=0.05 step=0.005 class=vertical value=0.01></td></tr>
+                                </table>
+                            </div>
+                            <div class=div450>
+                                <table class=table_horizontal><tr>
+                                    <td>dy</td>
+                                    <td><input type=range id=clough_se min=0.005 max=0.020 step=0.001 value=0.01></td>
+                                </tr></table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="" id=imk>
+                        <p>
+                            Ibarra-Medina-Krawinkler Model with Deterioration
+                            <button class="execute border2 long" id=plot21_anime onclick="result2animation(cyclic_data.data,'chap2',cyclic_data.dt);">Animate</button>
+                            <button class=invisible id=plot21_stop onclick="button_switch('plot21','stop');">Stop</button>
+                        </p>
+                        <div class=skeleton>
+                            <div>
+                                <p class="plot border2"><canvas id=plot21 width=400 height=400></canvas></p>
+                                <table class=table_vertical>
+                                    <tr>
+                                        <td>as</td><td>ac</td><td>Res</td><td>Λs</td><td>Λc</td><td>Λk</td><td>Λa</td><td>dt0</td>
+                                    </tr>
+                                    <tr>
+                                        <td><input type=range id=imk_as min=0 max=0.05 step=0.005 class=vertical value=0.01></td>
+                                        <td><input type=range id=imk_ac min=5 max=25 step=1 class=vertical value=10></td>
+                                        <td><input type=range id=imk_Res min=0 max=0.5 step=0.05 class=vertical value=0></td>
+                                        <td><input type=range id=imk_ls min=0 max=10 step=0.5 class=vertical value=5></td>
+                                        <td><input type=range id=imk_lc min=0 max=10 step=0.5 class=vertical value=5></td>
+                                        <td><input type=range id=imk_lk min=0 max=10 step=0.5 class=vertical value=5></td>
+                                        <td><input type=range id=imk_la min=0 max=10 step=1 class=vertical value=10></td>
+                                        <td><input type=range id=imk_dt0 min=0 max=0.5 step=0.05 class=vertical value=0></td>
+                                    </tr>
+                                </table>
+                                <table class=hidden id=imk_fpr>
+                                    <tr><td>F-pin</td></tr>
+                                    <tr><td><input type=range id=imk_pin_force min=0.01 max=1 step=0.05 class=vertical value=0.3></td></tr>
+                                </table>
+                                
+                            </div>
+                            <div class=div450>
+                                <table class=table_horizontal>
+                                    <tr>
+                                        <td>dy,dc</td><td><div id=imk_disp_slider></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td>du</td><td><input type=range id=imk_ddu min=-10 max=0 step=1 value=0></td>
+                                    </tr>
+                                    <tr class=hidden id=imk_ap>
+                                        <td>D-pin</td>
+                                        <td><input type=range id=imk_pin_stiff min=-2.0 max=-0.1 step=0.1 value=-0.5></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <button class="execute border2 pinch" onclick="po_pinch_selector('imk');">PO/Slip</button>
+                        </div>
+                    </div>
+                    <div class="invisible" id=multi>
+                        <p>
+                            Almighty Skeleton Curve Model with Simplified Deterioration
+                            <button class="execute border2 long" id=plot22_anime onclick="result2animation(cyclic_data.data,'chap2',cyclic_data.dt);">Animate</button>
+                            <button class=invisible id=plot22_stop onclick="button_switch('plot22','stop');">Stop</button>
+                        </p>
+                        <div class=skeleton>
+                            <div>
+                                <p class="plot border2"><canvas id=plot22 width=400 height=400></canvas></p>                                
+                                <div id=multi_force_slider></div>
+                                <table id=table_lambda>
+                                    <tr><td>Λ</td><td>Λk</td></tr>
+                                    <tr>
+                                        <td><input type=range id=multi_lambda min=0 max=10 step=0.5 class=vertical value=5></td>
+                                        <td><input type=range id=multi_lk min=0 max=10 step=0.5 class=vertical value=5></td>
+                                    </tr>
+                                </table>
+                                <table class=hidden id=multi_fpr>
+                                    <tr><td>F-pin</td></tr>
+                                    <tr><td><input type=range id=multi_pin_force min=0.01 max=1 step=0.05 class=vertical value=0.3></td></tr>
+                                </table>                              
+                            </div>
+                            <div class=div450>
+                                <table class=table_horizontal>
+                                    <tr>
+                                        <td>d0,d1...</td>
+                                        <td><div id=multi_disp_slider></div></td>
+                                        <td><button class="addrem back2" onclick="addHandle();">Add</button><button class="addrem back2" onclick="removeHandle();">Remove</button></td>
+                                    </tr>
+                                    <tr class=hidden id=multi_ap>
+                                        <td>D-pin</td>
+                                        <td><input type=range id=multi_pin_stiff min=-2.0 max=-0.1 step=0.1 value=-0.5></td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <button class="execute border2 pinch" onclick="po_pinch_selector('multi');">PO/Slip</button>
+                        </div>
+                    </div>
+                    <progress value=0 max=1 id=progress_chap2 class=hidden></progress><br>
+                    <button class="execute border2 long" onclick="temp_selector('clough');">Clough</button>
+                    <button class="execute border2 long" onclick="temp_selector('imk');">IMK</button>
+                    <button class="execute border2 long" onclick="temp_selector('multi');">Multi</button>
+                    <div id=template></div>
+                    <a class=text-left href="#description_chap2" onclick="return openclose(this);">Description</a> 
+                    <div class=text-left id=description_chap2>
+                        　ここで決めた復元力特性が他の章でも使われます。<br>
+                        　Descriptionをクリックで閉じたり開いたりできます。<br>
+                        画面の説明<br>
+                        <table id=description_table>
+                            <tr>
+                                <th>プロット画面</th>
+                                <td>　赤色が変位を正にしたり負にしたりしながら、その絶対値を大きくしていく
+                                    Cyclicな載荷によるもので、水色が変位を単調増加させて押し切るMonotonicな載荷によるものです。</td>
+                            </tr>
+                            <tr>
+                                <th>Animateボタン</th>
+                                <td>　Cyclicな載荷での結果をAnimationで見ることが出来ます。</td>
+                            </tr>
+                            <tr>
+                                <th>PO/Slipボタン</th>
+                                <td>　IMKモデルとオールマイティモデルでは右下のPO/Slipボタンで最大点指向型とピンチング型を交換することが出来ます。
+                                    ピンチング形状が現れない場合は該当するスライダを調節してください。</td>
+                            </tr>
+                            <tr>
+                                <th>Clough/IMK/Multi</th>
+                                <td>　復元力特性モデルの変更、リセット</td>
+                            </tr>
+                            <tr>
+                                <th>以下スライダ</th>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <th>Clough</th>
+                                <td>　骨格曲線のパラメータ<br>
+                                    　asは降伏後剛性<br>
+                                    　dyは降伏変位</td>
+                            </tr>
+                            <tr>
+                                <th>IMK as,ac,Res</th>
+                                <td>　強度、剛性のパラメータ<br>
+                                    　asは降伏後剛性<br>
+                                    　acは最大強度到達後剛性<br>
+                                    　Resは強度低下後残存耐力</td>
+                            </tr>
+                            <tr>
+                                <th>IMK Λs,c,k,a,dt0</th>
+                                <td>　耐力低下に関わるパラメータ<br>
+                                    　Λsは降伏後強度<br>
+                                    　Λcは最大強度到達後強度<br>
+                                    　Λkは除荷剛性<br>
+                                    　Λaは指向点変位スライド<br>
+                                    　dt0は初期指向点変位スライド。<br>
+                                    　Λaはdt0が入力された状態でないと変化が現れないが、小さい値を指定すると吸収可能エネルギーを上回って崩壊となる可能性があるので注意。
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>IMK dy,dc,du</th>
+                                <td>　変位のパラメータ<br>
+                                    　左がdyで右がdc<br>
+                                    　dyは降伏変位<br>
+                                    　dcは最大強度到達変位<br>
+                                    　duは限界変位<br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>IMK,Multi <br>F-pin,D-pin</th>
+                                <td>　ピンチング形状のパラメータ<br>
+                                    　F-pinはピンチング終了強度<br>
+                                    　D-pinはピンチング終了変位<br>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Multi f0,f1...</th>
+                                <td>　強度のパラメータ<br>　
+                                    　骨格曲線上の点における強度</td>
+                            </tr>
+                            <tr>
+                                <th>Multi Λ,Λk</th>
+                                <td>　耐力低下のパラメータ<br>
+                                    　Λは骨格曲線<br>
+                                    　Λkは除荷剛性<br>
+                                </td>
+                            </tr>
+                            <th>Multi d0,d1...</th>
+                            <td>　変位のパラメータ<br>
+                                　Addで追加(７つまで)<br>
+                                　Removeで削除(2つまで)<br>
+                            </td>
+                        </table>
+                        <br><br>
+                        　復元力特性は履歴的な変位の入力と復元力が一対一に対応させる関係です。今回は比較的単純なバイリニア型のCloughモデルと、
+                        耐力低下を考慮することのできるIbarra-Medina-Krawinklerモデル、さらに耐力低下を単純にした代わりに骨格曲線を任意にした
+                        オールマイティな復元力特性の3つを取り上げています。復元力特性で重要なのはMonotonicな載荷で現れる骨格曲線の概形と、
+                        再載荷時の指向点を決める規則と、Cyclicな載荷で現れる耐力低下の3つです。<br><br>
+                        　骨格曲線は降伏のみを考慮するバイリニア、もしくはひび割れを考慮するトリリニアのふたつが一般的で、Cloughモデルはこのバイリニア型となっていますが、
+                        IMKモデルはさらに最大強度到達を考慮したトリリニア型、オールマイティモデルはnリニア型(nは7まで)を採用しています。<br><br>
+                        　再載荷時の指向点を決める規則には主に、それまでの最大到達変位を目指す最大点指向型、最大到達変位を目指すものの再載荷のはじめは強度が出ないピンチング/スリップ型、
+                        また除荷剛性のまま拡大していくバイリニア型などがあります。今回取り上げた３つの復元力特性はどれも最大点指向型を基本としていますが、
+                        IMKモデルとオールマイティモデルはピンチング型とすることも可能で、ピンチング形状を膨らませることでバイリニア型を模すことも可能です。<br><br>
+                        　耐力低下は、既存の復元力特性では再載荷時であろうと骨格曲線まで強度が上昇するはずですが、実際にはそれより手前に落ち込む現象を表現するために、考えられたもので
+                        いくつかその方法が提案されていますが、今回は、載荷曲線が領域を囲んでエネルギーを吸収することで、骨格曲線を内側に後退させるIMKモデル型のものを用いています。
+                        Cloughモデルにはこの耐力低下はなく、IMKモデルでは4つ、オールマイティモデルでは2つのパラメータを与えています。<br><br>
+                    </div>
+                    <div class="panel_next back3" id=next_chap3>
+                        <h4>Next:崩壊解析</h4>
+                        <p class="text-left">
+                            　自分で選んだ復元力特性で、自分で決めたパラメータ設定で、とりあえず揺らしてみましょう！
+                        </p>
+                        <button class="next back3" onclick="openclose(this);Chapter3();" href="#button_chap3">
+                            Chapter 3. <br>
+                            Collapse Analysis
+                        </button>                        
+                    </div>
+                    <a href="#chap2" onclick="openclose(this);">Close</a> 
                 </div>
-                <button class=open>4. Collapse Analysis</button>
-                <div id=chap4>
-                    <p class=shakePlot><canvas id=plot7 width=400 height=400></canvas></p>
-                    <progress value="0" max="1" id="chap4progress"></progress><br>
-                    <input type=range min=0 max=1.5 step=0.05 id=plot7range value=1.0>
-                    <button class=execute onclick="ga=gm_random(1);">Change GM</button>
-                    <input type=text placeholder="Amplitude" id=plot7amp onChange="Chapter4();">
-                    <button class=execute onclick="Chapter4();">Run</button>
-                    <button class=execute onclick="clearInterval(sint4)">Stop</button><br>
-                    <b id=chap4table><table><tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr></table></b>
-                    <p class=close>
-                        <a href="#chap4">Next</a>
-                    </p> 
+
+                <button class="open back3 border3" onclick="openclose(this);" href="#chap3" id=button_chap3>3. Collapse Analysis</button>
+                <div id=chap3 class=invisible>
+                    <div class=wrapper>
+                        <div class=left>
+                            <p class="plot border3"><canvas id=plot30 width=400 height=400></canvas></p>
+                            <input type=range min=0.1 max=1.5 step=0.05 id=range_chap3 value=1.0 class=vertical><br>
+                            <progress value=0 max=1 id=progress_chap3></progress><br>
+                            <button class="execute border3" onclick="ga=gm_random(1);">Change GM</button>
+                            <input type=number min=0.1 max=10.0 placeholder=Amplitude id=num_chap3 onChange="Chapter4();">
+                            <button id=plot30_anime class="execute border3 long" onclick="Chapter3();">Run</button>
+                            <button id=plot30_stop class="invisible" onclick="button_switch('plot30','stop');">Stop</button><br>
+                        </div>
+                        <div class=right id=table_chap3>
+                            <table class=table_result><tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr></table>
+                        </div>
+                    </div>
+                    <a class=text-left href="#description_chap3" onclick="return openclose(this);" class=text-left>Description</a> 
+                    <p id=description_chap3 class=text-left>
+                        　Change GMで地震動を、右側のスライダかもしくは入力欄で入力倍率を選択してRunで揺らしてみましょう。<br>
+                        　右側のResultにCollapseと出たら壊れてしまったことを示します。Not Yetと出たらその倍率では壊れなかったわけです。<br>
+                        　崩壊に至る最小の倍率が崩壊倍率だと言えるでしょう。さて、別の地震動でも崩壊倍率は同じになるでしょうか。
+                    </p>
+                    <div class="panel_next back4" id=next_chap4>
+                        <h4>Next:漸増動的解析</h4>
+                        <p class=text-left>
+                            　自分でいくつか試してみて崩壊倍率を探してもらったと思いますが、これをコンピュータにやってもらえばだいぶ楽に、多くの地震波について崩壊倍率を
+                            得ることが出来るはずです。これが漸増動的解析、通称IDAです。
+                        </p>
+                        <button class="next back4" onclick="openclose(this);Chapter4();" href="#button_chap4">
+                            Chapter 4. <br>
+                            Incremental Dynamic Analysis
+                        </button>                        
+                    </div>
+                    <a href="#chap3" onclick="openclose(this);">Close</a>
                 </div>        
-                <button class=open>5. Incremental Dynamic Analysis</button>
-                <div id=chap5>
-                    <p><canvas id=plot8 width=400 height=400></canvas></p>
-                    <progress value="0" max="1" id="chap5progress"></progress><br>
-                    <input type=text placeholder="No. of used GMs" id=plot8no>
-                    <button class=execute onclick="Chapter5();">Run</button><br>
-                    <b id=chap5table><table><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table></b>
-                    <p class=pp>*NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation</p>
-                    <p class=close>
-                        <a href="#chap5">Next</a>
-                    </p> 
-                </div>
-                <button class=open>6. Conducting IDA</button>
-                <div id=chap6>
-                    <div id=chap6.1>
-                        <p><canvas id=plot9></canvas></p>
-                        <table>
-                            <tr>
-                                <th><button class=Selector onclick="paramSet('lambda',100);Chapter31();">Lambda</button></th>
-                                <td><button class=Selector onclick="paramSet('lambda',25);Chapter31();">25</button></td>
-                                <td><button class=Selector onclick="paramSet('lambda',50);Chapter31();">50</button></td>
-                                <td><button class=Selector onclick="paramSet('lambda',100);Chapter31();">100</button></td>
-                                <td><button class=Selector onclick="paramSet('lambda',10000);Chapter31();">10000</button></td>
-                            </tr>
-                            <tr>
-                                <th><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">delta_c</button></th>
-                                <td><button class=Selector onclick="paramSet('dp',0.5);Chapter31();">1.5%</button></td>
-                                <td><button class=Selector onclick="paramSet('dp',1.0);Chapter31();">2.0%</button></td>
-                                <td><button class=Selector onclick="paramSet('dp',2.0);Chapter31();">3.0%</button></td>
-                                <td><button class=Selector onclick="paramSet('dp',3.0);Chapter31();">4.0%</button></td>
-                            </tr>
-                            <tr>
-                                <th><button class=Selector onclick="paramSet('as',0.01);Chapter31();">alpha_s</button></th>
-                                <td><button class=Selector onclick="paramSet('as',0.01);Chapter31();">1.0%</button></td>
-                                <td><button class=Selector onclick="paramSet('as',0.03);Chapter31();">3.0%</button></td>
-                                <td><button class=Selector onclick="paramSet('as',0.05);Chapter31();">5.0%</button></td>
-                            </tr>
-                            <tr>
-                                <th><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">alpha_c</button></th>
-                                <td><button class=Selector onclick="paramSet('ac',0.05);Chapter31();">5.0%</button></td>
-                                <td><button class=Selector onclick="paramSet('ac',0.10);Chapter31();">10%</button></td>
-                                <td><button class=Selector onclick="paramSet('ac',0.20);Chapter31();">20%</button></td>
-                            </tr>
-                        </table>   
-                        <button class=execute onclick="setting=setter(1);Chapter60();">Reset</button>
-                        <input type=text placeholder="No. of used GMs" id=plot9no>
-                        <button class=execute>Change Ground Motion</button>
-                        <button class=execute onclick="Chapter61();">Run</button>
+
+                <button class="open back4 border4" onclick="openclose(this);" href="#chap4" id=button_chap4>4. Incremental Dynamic Analysis</button>
+                <div id=chap4 class=invisible>
+                    <div class=wrapper>
+                        <div class=left>
+                            <p class="plot border4"><canvas id=plot40 width=400 height=400></canvas></p>
+                            <input type=range min=1 max=30 step=1 id=range_chap4 value=5 class=vertical><br>
+                            <progress value=0 max=1 id="progress_chap4"></progress><br>
+                            <input type=number min=1 max=30 placeholder="No. of used GMs" id=num_chap4>
+                            <button class="execute border4 long" onclick="Chapter4();">Run</button><br>
+                        </div>
+                        <div class=right id=table_chap4>
+                            <table class=table_result><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table>
+                        </div>
                     </div>
-                    <div id=chap6.2>                   
-                        <p><canvas id=plot10></canvas></p>
-                        <p><canvas id=plot11></canvas></p>
-                    </div>       
-                    <p class=close>
-                        <a href="#chap6">Next</a>
-                    </p>      
+
+                    <a class=text-left href="#description_chap4" onclick="return openclose(this);">Description</a> 
+                    <p class=text-left id=description_chap4>
+                        　スライダで入力地震波の数を選択します、一般的なCPUの性能では1波2秒くらいで出来るはずです。<br><br>
+                        　ここでは横軸に最大変位を、縦軸に入力倍率を取っています。先ほどは崩壊の定義を詳しく示しませんでしたが、
+                        少なくともここでは少しの倍率の増加で変位が急激に拡大することを崩壊とみなすことが出来ます。<br><br>
+                        　さて、耐力低下も最大強度到達もないCloughモデルを用いても、この崩壊は明瞭なものになるでしょうか。<br><br>
+                        *NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation
+                    </p>
+                    <div class="panel_next back5" id=next_chap5>
+                        <h4>Next:崩壊確率曲線</h4>
+                        <p class=text-left>
+                            4章では結果として中央値と標準偏差を示しましたが、少しイメージがしづらいと思うので分かりやすく崩壊確率曲線で見てみることにしましょう。
+                        </p>
+                        <button class="next back5" onclick="openclose(this);" href="#button_chap5">
+                            Chapter 5. <br>
+                            Summary of Results
+                        </button>                        
+                    </div>
+                    <a href="#chap4" onclick="openclose(this);">Close</a>
                 </div>
-                <button class=open>7. Summary of Result</button>
-                <div id=chap7>
-                    <p><canvas id=plot12></canvas></p>
-                    <p><canvas id=plot13></canvas></p>
-                    <b id=result></b>
-                    <p class=close>
-                        <a href="#chap7">Close</a>
-                    </p> 
+
+                <button class="open back5 border5" onclick="openclose(this);" href="#chap5" id=button_chap5>5. Summary of Results</button>
+                <div id=chap5 class=invisible>
+                    <div class=wrapper>
+                        <div class=left>
+                            <p class="plot border5"><canvas id=plot50></canvas></p><br>
+                        </div>
+                        <div class=right id=table_chap5>
+                            <table class=table_result><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table>
+                        </div>
+                    </div>
+
+                    <a class=text-left href="#description_chap5" onclick="return openclose(this);">Description</a> 
+                    <p class=text-left id=description_chap5>
+                        
+                    </p>
+                    <a href="#chap5" onclick="openclose(this);">Close</a>
                 </div>
             </div>
         </div>
+        <a id=download_link></a>
         <div class=footer>
+            <p class=text-left>
+                　このサイトはjQuery, Chart.js, noUiSlider.js, Materialize.css, indexedDBを利用しています。<br>
+                　本サイトで用いられている模擬地震動データと復元力特性コードは東京大学工学部塩原・田尻研究室によるものです。
+            </p>
         </div> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
-        <script src="https://www.usamimi.info/~geko/arch_acade/elf021_matrix/matrix_library_v010g.js"></script>
         <script src="hysteresismodel.js"></script>
-        <script src="collapse.js"></script>
+        <script src="collapse1.js"></script>
     </body>
 </html>
