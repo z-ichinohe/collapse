@@ -224,7 +224,7 @@ function setting2slider(){
         let tr=[[],[]];
         setting.system.force.forEach((val,idx)=>{
             tr[0][idx]="<td>f"+String(idx)+"</td>";
-            tr[1][idx]="<td><input type=range id=multi_f"+String(idx)+" min=0.01 max=1.5 step=0.01 class=vertical value="+String(val)+"></td>";
+            tr[1][idx]="<td><input type=range id=multi_f"+String(idx)+" min=0.01 max=1.5 step=0.01 orient=vertical value="+String(val)+"></td>";
         });
         tr=tr.map((val)=>{
             val.unshift("<tr>");
@@ -702,7 +702,6 @@ function Chapter4(){
         });
         const interv3=()=>new Promise(resolve=>{
             plot.data.datasets[idx].data.push({x:supdef,y:supamp});
-            console.log(supdef);
             if(supamp>plot.options.scales.yAxes[0].ticks.max-0.1) plot.options.scales.yAxes[0].ticks.max=supamp+0.1;
             plot.update();
             resolve(supamp);
@@ -715,9 +714,7 @@ function Chapter4(){
         let idx=0,ampdict={};
         for(const val of gmset){
             ampdict[val.name]=await sdfida(val,idx,system,control,plot40);
-            console.log(val.name);
             elem("progress_chap4").value=(idx+1)/gmset.length;
-            console.log(performance.now()-perbegin);
             idx++;
         }
         return ampdict;
