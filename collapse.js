@@ -766,8 +766,7 @@ function ida_res2table(){
             String(mean.toFixed(3)),
             ", StD*: ",
             String(Math.sqrt(sum(arr.map(key=>(val.amp[key]-mean)**2))/arr.length).toFixed(3)),
-            "<br>",
-            "<a class='a_result a_left' onclick='return openclose(this);' href=#",
+            
         ].join("");
         let table=[];
         if(val.system.md==12){
@@ -783,7 +782,7 @@ function ida_res2table(){
             const keylist=["Mode","Λ,Λk","F-pin","d0,d1...","f0,f1...","D-pin"];
             table=["md","lambda","Fpr","disp","force","Ap"].map((key,i)=>"<tr><td>"+keylist[i]+"</td><th>"+String(val.system[key])+"</th></tr>");
         };
-        table.push("</table></button>");
+        table.push("</table></div>");
         table=table.join("");
         return ["res","temp","Setting"].map(key=>{
             if(key==="Setting"){
@@ -804,16 +803,19 @@ function ida_res2table(){
                 };
             }else{
                 return [
-                    "<button class='result border3' onclick='ida_res_button(this);' id=",
+                    "<div class='div_result'><button class='result border6' onclick='ida_res_button(this);' id=",
                     key,
                     String(idx),
                     ">",
                     button,
+                    "</button>",
+                    "<br>",
+                    "<a class='a_left' onclick='return openclose(this);' href=#",
                     "table_",
                     key,
                     String(idx),
                     ">See Description</a>",
-                    "<a class='a_result a_right' onclick='return result_delete(this);' id=",
+                    "<a class='a_right' onclick='return result_delete(this);' href=#",
                     "setting",
                     String(idx),
                     ">Delete</a><table class=invisible id=table_",
@@ -868,7 +870,7 @@ function ida_res_button(btn){
 }
 
 function result_delete(btn){
-    const num=Number(btn.getAttribute("id")[7]);
+    const num=Number(btn.getAttribute("href")[8]);
     let confirm=window.confirm("このデータを削除します。よろしいですか？");
     if(confirm){
         idaresult.splice(num,1);
