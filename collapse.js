@@ -1,6 +1,6 @@
 /* Declaration */
 var ga={},gas=[];
-var plot10,plot11,plot12,plot20,plot21,plot30,plot20,plot20,plot21,plot22,plot30,plot40;
+var plot10,plot11,plot20,plot21,plot22,plot30,plot40,plot50;
 var sint,sint,sint3,sint4,sint,sint42;
 var chap3table=["<tr><th>No.</th><th>G.M.</th><th>Amp.</th><th>Result</th></tr>"];
 var chap4table=["<tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr>"];
@@ -82,7 +82,7 @@ const openFile=()=>{
     })
     .then(function(jsonData){
         gas=jsonData;
-        ga=gm_random(1);
+        ga=gm_random(1)[0];
     });
 }
 openFile();
@@ -92,7 +92,7 @@ function loadFile(){
     var reader=new FileReader();
     reader.onload=(event)=>{
         gas=JSON.parse(reader.result);
-        ga=gm_random(1);
+        ga=gm_random(1)[0];
     }
     reader.readAsText(file);
 }
@@ -135,7 +135,7 @@ function gm_random(n){
             if(!idxarr.some(v=>v===newidx)) idxarr.push(newidx);
         }
         gmset=idxarr.map(val=>gas[val]);
-        if(n===1) gmset=gmset[0];
+        //if(n===1) gmset=gmset[0];
     }
     return gmset;
 }
@@ -184,8 +184,8 @@ function setting2slider(){
     elem("multi").className="invisible";    
     if(setting.system.md==12){
         elem("clough").className="";
-        elem("clough_au").value=String(setting.system.au[0]);
-        elem("clough_se").value=String(setting.system.se[0]*setting.system.h[0]/setting.system.fy[0]);
+        elem("clough_au").value=String(setting.system.au);
+        elem("clough_se").value=String(setting.system.se*setting.system.h/setting.system.fy);
         showHyste("plot20");
     }else if(setting.system.md==31||setting.system.md==32){
         elem("imk").className="";
@@ -203,10 +203,10 @@ function setting2slider(){
                 elem("imk_"+key).value=String(setting.system[key]);
             }
         }
-        elem("imk_pin_force").value=String(setting.system.Fpr[0]);
-        elem("imk_pin_stiff").value=String(setting.system.Fpr[0]-setting.system.Ap[0]);
-        elem("imk_ac").value=String(setting.system.dpc[0]/(1+setting.system.as[0]*setting.system.dp[0]));
-        const dy=setting.system.My[0]/setting.system.h[0]/setting.system.se[0]*100;
+        elem("imk_pin_force").value=String(setting.system.Fpr);
+        elem("imk_pin_stiff").value=String(setting.system.Fpr-setting.system.Ap);
+        elem("imk_ac").value=String(setting.system.dpc/(1+setting.system.as*setting.system.dp));
+        const dy=setting.system.My/setting.system.h/setting.system.se*100;
         slider.imk.noUiSlider.set([String(dy),String(dy*(setting.system.dp[0]+1))]);
     }else if(setting.system.md==41){
         elem("multi").className="";
@@ -262,7 +262,7 @@ function setting2slider(){
 function Chapter1(){
     button_switch("chap1","start");
     elem("progress_chap1").value=0;
-    ga=gm_random(1);
+    ga=gm_random(1)[0];
     const system=vector(setting.system),control=setting.control;
     control.amp=0.6;
     const result=sdf(system,ga,control);
@@ -707,29 +707,202 @@ function Chapter4(){
         await interv2();
         return await interv3();
     }
-    let idx=0,ampres=[];
     const start=async ()=>{
-        for (const gm of gmset){
-            ampres[idx]=await sdfida(gm,idx,system,control,plot40);
+        let idx=0,ampdict={};
+        for(const val of gmset){
+            ampdict[val.name]=await sdfida(val,idx,system,control,plot40);
             elem("progress_chap4").value=(idx+1)/gmset.length;
-            idx++;
             console.log(performance.now()-perbegin);
+            idx++;
         }
+        return ampdict;
     }
-    start().then(()=>{
-        const mean=sum(ampres)/ampres.length;
-        chap4table.push(["<tr><th>",String(gmset.length),"</th><td>",mean.toFixed(3),"</td><td>",Math.sqrt(sum(ampres.map(val=>(val-mean)**2))/ampres.length).toFixed(3),"</td></tr>"].join(""));
+    start().then((ampdict)=>{
+        const amparr=Object.keys(ampdict).map(key=>ampdict[key]);
+        const mean=sum(amparr)/amparr.length;
+        chap4table.push([
+            "<tr><th>",
+            String(gmset.length),
+            "</th><td>",
+            mean.toFixed(3),
+            "</td><td>",
+            Math.sqrt(sum(amparr.map(val=>(val-mean)**2))/amparr.length).toFixed(3),
+            "</td></tr>"
+        ].join(""));
         let table4=chap4table.map(val=>val);
         table4.unshift("<table class=table_result>");
         table4.push("</table>");
         elem("table_chap4").innerHTML=table4.join("");
         setting.control.amp=0.6;
-        idaresult.push({
-            amp:ampres,
-            system:Object.create(setting.system),
+        const system=renamer(setting.system);
+        let no_change=true;
+        idaresult.forEach((val)=>{
+            if(system_compare(val.system,system)){
+                val.amp=Object.assign(val.amp,ampdict);
+                no_change=false;
+            }
         });
+        if(no_change){
+            idaresult.push({
+                amp:ampdict,
+                system:system,
+            });   
+        }
+        ida_res2table();
     });
 }
+
+function ida_res2table(){
+    deleteSample();
+    const button_list=idaresult.map((val,idx)=>{
+        const arr=Object.keys(val.amp);
+        const mean=sum(arr.map(key=>val.amp[key]))/arr.length;
+        let button=[
+            "Setting",
+            String(idx),
+            ", NoGM*: ",
+            String(arr.length),
+            ", MCA*: ",
+            String(mean.toFixed(3)),
+            ", StD*: ",
+            String(Math.sqrt(sum(arr.map(key=>(val.amp[key]-mean)**2))/arr.length).toFixed(3)),
+            "<br>",
+            "<a class='a_result a_left' onclick='return openclose(this);' href=#",
+        ].join("");
+        let table=[];
+        if(val.system.md==12){
+            const keylist=["Mode","as","se"];
+            table=["md","au","se"].map((key,i)=>"<tr><td>"+keylist[i]+"</td><th>"+String(val.system[key])+"</th></tr>");
+        }else if(val.system.md==31){
+            const keylist=["Mode","as","dpc","Res","ls","lc","lk","la","dt0","se","dc","du"];
+            table=["md","as","dpc","Res","ls","lc","lk","la","dt0","se","dp","ddu"].map((key,i)=>"<tr><td>"+keylist[i]+"</td><th>"+String(val.system[key])+"</th></tr>");
+        }else if(val.system.md==32){
+            const keylist=["Mode","as","dpc","Res","ls","lc","lk","la","dt0","F-pin","se","dc","du","D-pin"];
+            table=["md","as","dpc","Res","ls","lc","lk","la","dt0","Fpr","se","dp","ddu","Ap"].map((key,i)=>"<tr><td>"+keylist[i]+"</td><th>"+String(val.system[key])+"</th></tr>");
+        }else if(val.system.md==41){
+            const keylist=["Mode","Λ,Λk","F-pin","d0,d1...","f0,f1...","D-pin"];
+            table=["md","lambda","Fpr","disp","force","Ap"].map((key,i)=>"<tr><td>"+keylist[i]+"</td><th>"+String(val.system[key])+"</th></tr>");
+        };
+        table.push("</table></button>");
+        table=table.join("");
+        return ["res","temp","Setting"].map(key=>{
+            if(key==="Setting"){
+                let amparr=arr.map(k=>val.amp[k]);
+                amparr.sort();
+                let data=amparr.map((v,i)=>{return {x:v,y:(i+1)/arr.length}});
+                data.unshift({x:Math.min(...amparr)-0.001,y:0});
+                return {
+                    label:key+String(idx),
+                    type:"line",
+                    lineTension:0,
+                    pointRadius:3,
+                    fill:false,
+                    borderColor:metroColors[idx%metroColors.length],
+                    borderWidth:2,
+                    pointBackgroundColor:metroColors[idx%metroColors.length],
+                    data:data,
+                };
+            }else{
+                return [
+                    "<button class='result border3' onclick='ida_res_button(this);' id=",
+                    key,
+                    String(idx),
+                    ">",
+                    button,
+                    "table_",
+                    key,
+                    String(idx),
+                    ">See Description</a>",
+                    "<a class='a_result a_right' onclick='return result_delete(this);' id=",
+                    "setting",
+                    String(idx),
+                    ">Delete</a><table class=invisible id=table_",
+                    key,
+                    String(idx),
+                    ">",
+                    table,
+                ].join("");
+            }
+        });
+    });
+    elem("table_chap5").innerHTML=button_list.map(val=>val[0]+"<br>").join("");
+    elem("template").innerHTML=button_list.map(val=>val[1]).join("");
+    if(plot50) plot50.destroy();
+    plot50=new Chart(elem("plot50"),{
+        type:"scatter",
+        data:{
+            datasets:button_list.map(val=>val[2]),
+        },
+        options:{
+            animation:false,
+            scales:{
+                xAxes:[{
+                    ticks:{
+                        min:0.0,
+                    },
+                }],
+                yAxes:[{
+                    ticks:{
+                        max:1.0,
+                        min:0.0,
+                    },
+                }],
+            },
+        },
+    });
+    createSample();
+}
+
+function ida_res_button(btn){
+    const char=btn.getAttribute("id");
+    if(char.startsWith("temp")){
+        setting.system=renamer(idaresult[Number(char[4])].system);
+        setting2slider();
+    }else if(char.startsWith("res")){
+        let meta=plot50.data.datasets[Number(char[3])]._meta;
+        const idx=Object.keys(meta)[0];
+        if(meta[idx].hidden===true) meta[idx].hidden=false;
+        else meta[idx].hidden=true;
+        plot50.update();
+    }
+}
+
+function result_delete(btn){
+    const num=Number(btn.getAttribute("id")[7]);
+    let confirm=window.confirm("このデータを削除します。よろしいですか？");
+    if(confirm){
+        idaresult.splice(num,1);
+        ida_res2table();
+    }
+    return false;
+}
+
+function system_compare(system1,system2){
+    let result=false;
+    if(system1.md[0]===system2.md[0]){
+        if(system1.md[0]===12){
+            result=["au","se"].every(key=>{
+                return (system1[key][0]===system2[key][0]);
+            });
+        }else if(system1.md[0]===31||system1.md[0]===32){
+            result=["se","as","Res","dt0","ddu","ls","lc","la","lk","dp","dpc"].every(key=>{
+                return (system1[key][0]===system2[key][0]);
+            });
+            if(result===true&&system1.md[0]===32){
+                result=["Ap","Fpr"].every(key=>{
+                    return (system1[key][0]===system2[key][0]);
+                }); 
+            }
+        }else if(system1.md==41){
+            result=["lambda","disp","force","Ap","Fpr"].every(key=>{
+                if(key==="Ap"||key==="Fpr") return (system1[key][0]===system2[key][0]);
+                else return system1[key].every((val,idx)=>(val===system2[key][idx]));
+            }); 
+        }
+    }
+    return result;
+}
+
 
 /* Analysis Function */
 const sum=(arr)=>arr.reduce((acc,cur)=>acc+=cur);
@@ -774,7 +947,7 @@ function setter(Nst){
         dt0:0,
         ls:100,
         lc:100,
-        la:100,
+        la:372,
         lk:100,
         cs:1,
         cc:1,
@@ -1128,3 +1301,71 @@ function removeHandle(){
     }else console.log("Number of handles can't be less than 2.");
 }
 
+var ver = 1, dbName="collapse", storeName="idaresult", key_id=1;
+var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;
+var IDBTransaction = window.IDBTransaction || window.webkitIDBTransaction || window.mozIDBTransaction;
+var db = null;
+
+function createSample(){
+    let openRequest = indexedDB.open(dbName, ver);
+    openRequest.onupgradeneeded = function(e){
+        console.log("create-upgradeneeded");
+        db = openRequest.result;
+        db.createObjectStore(storeName, { "keyPath": "id" });
+        console.log(db.objectStoreNames);
+    }
+    openRequest.onsuccess = function(e) {
+        db = openRequest.result;
+        let addRequest = db.transaction(storeName, "readwrite").objectStore(storeName).put({
+            id:key_id,
+            result:idaresult,
+        });
+        addRequest.onsuccess=function(){
+            console.log("Success");
+        }
+        addRequest.onerror = function(err){
+            console.log(err.message);
+        }
+    }           
+    openRequest.onerror = function(err){console.log(err.message)}
+    openRequest.onblocked=function(err){console.log("blocked")}
+}
+
+function getSample() {
+    let openRequest=indexedDB.open(dbName,ver);
+    db=null;
+    openRequest.onsuccess=function(e){
+        db=openRequest.result;
+        if(db.objectStoreNames.length>0){
+            const transaction = db.transaction([storeName], IDBTransaction.READ_ONLY);
+            let getRequest = transaction.objectStore(storeName).get(key_id);
+            getRequest.onsuccess = function(e){
+                idaresult=getRequest.result.result;
+                if(idaresult) ida_res2table();
+                else console.log("Not Found");
+            }
+            getRequest.onerror=function(e){console.log(e)}
+        }else{
+            console.log("db none");
+            db.close();
+            deleteSample();
+        }   
+    }
+    openRequest.onerror=function(e){console.log(e)}
+}
+
+function deleteSample() {
+    if(db) db.close();
+    var deleteRequest = indexedDB.deleteDatabase(dbName);
+    deleteRequest.onsuccess=function(e){
+        console.log("Deleted in Successful");
+    }
+    deleteRequest.onerror = function(err){
+        console.log(err.message);
+    }
+    deleteRequest.onblocked=function(e){
+        console.log("There is a severe error, I hope you don't get this message.");
+    }
+}
+
+getSample();
