@@ -64,6 +64,26 @@ button.next{
     color:#fff;
 }
 
+.result{
+    width:300px;
+    border-radius:10px;
+    border:solid 4px;
+    background-color: #fff;
+    margin-top:10px;
+    margin-right:10px;
+    font-size: 13px;
+}
+
+a.a_result{
+    margin-top:0px;
+    margin-bottom: 0px;
+}
+a.a_left{
+    float:left;
+}
+a.a_right{
+    float:right;
+}
 a.tab{
     display:inline-block;
     margin-top:2px;
@@ -162,7 +182,7 @@ input[type=range]{
     height:10px;
     margin:0 auto 0;
 }
-input[type=range].vertical{
+input[type=range][orient=vertical]{
     -webkit-appearance: slider-vertical;
     writing-mode:bt-lr;
     width:20px;
@@ -196,8 +216,6 @@ input[type=range].vertical{
 #num_chap3,#num_chap4{
     width:100px;
 }
-
-
 
 /* Footer */
 .footer{
@@ -304,4 +322,7 @@ h4{
     margin-left:auto;
     margin-right:auto;
     font-size: 17px;
+}
+#template{
+    font-size:13.3px;
 }
