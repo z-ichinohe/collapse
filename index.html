@@ -9,7 +9,7 @@
         <link rel=stylesheet href="collapse.css">
     </head>
     <body>
-        <div class=invisible>
+        <div class=header>
             <input type=file id=jsonfile accept=".json" onChange="loadFile();">
         </div>
         <div class=main>
@@ -34,7 +34,7 @@
                         Chapter 1.<br>
                         Seismic Response Analysis
                     </button><br> 
-                    <button class="next back0" onclick="openclose(this);noGuidance();" href="#button_chap1"> 
+                    <button class="next back0" onclick="noGuidance();" href="#button_chap1"> 
                         Without Guidance
                     </button>   
                 </div>
@@ -88,7 +88,7 @@
                                 <p class="plot border2"><canvas id=plot20 width=400 height=400></canvas></p>
                                 <table class=table_vertical>
                                     <tr><td>as</td></tr>
-                                    <tr><td><input type=range id=clough_au min=0.0 max=0.05 step=0.005 class=vertical value=0.01></td></tr>
+                                    <tr><td><input type=range id=clough_au min=0.0 max=0.05 step=0.005 orient=vertical value=0.01></td></tr>
                                 </table>
                             </div>
                             <div class=div450>
@@ -114,19 +114,19 @@
                                         <td>as</td><td>ac</td><td>Res</td><td>Λs</td><td>Λc</td><td>Λk</td><td>Λa</td><td>dt0</td>
                                     </tr>
                                     <tr>
-                                        <td><input type=range id=imk_as min=0 max=0.05 step=0.005 class=vertical value=0.01></td>
-                                        <td><input type=range id=imk_ac min=5 max=25 step=1 class=vertical value=10></td>
-                                        <td><input type=range id=imk_Res min=0 max=0.5 step=0.05 class=vertical value=0></td>
-                                        <td><input type=range id=imk_ls min=0 max=10 step=0.5 class=vertical value=5></td>
-                                        <td><input type=range id=imk_lc min=0 max=10 step=0.5 class=vertical value=5></td>
-                                        <td><input type=range id=imk_lk min=0 max=10 step=0.5 class=vertical value=5></td>
-                                        <td><input type=range id=imk_la min=0 max=10 step=1 class=vertical value=10></td>
-                                        <td><input type=range id=imk_dt0 min=0 max=0.5 step=0.05 class=vertical value=0></td>
+                                        <td><input type=range id=imk_as min=0 max=0.05 step=0.005 orient=vertical value=0.01></td>
+                                        <td><input type=range id=imk_ac min=5 max=25 step=1 orient=vertical value=10></td>
+                                        <td><input type=range id=imk_Res min=0 max=0.5 step=0.05 orient=vertical value=0></td>
+                                        <td><input type=range id=imk_ls min=0 max=10 step=0.5 orient=vertical value=5></td>
+                                        <td><input type=range id=imk_lc min=0 max=10 step=0.5 orient=vertical value=5></td>
+                                        <td><input type=range id=imk_lk min=0 max=10 step=0.5 orient=vertical value=5></td>
+                                        <td><input type=range id=imk_la min=0 max=10 step=1 orient=vertical value=10></td>
+                                        <td><input type=range id=imk_dt0 min=0 max=0.5 step=0.05 orient=vertical value=0></td>
                                     </tr>
                                 </table>
                                 <table class=hidden id=imk_fpr>
                                     <tr><td>F-pin</td></tr>
-                                    <tr><td><input type=range id=imk_pin_force min=0.01 max=1 step=0.05 class=vertical value=0.3></td></tr>
+                                    <tr><td><input type=range id=imk_pin_force min=0.01 max=1 step=0.05 orient=vertical value=0.3></td></tr>
                                 </table>
                                 
                             </div>
@@ -160,13 +160,13 @@
                                 <table id=table_lambda>
                                     <tr><td>Λ</td><td>Λk</td></tr>
                                     <tr>
-                                        <td><input type=range id=multi_lambda min=0 max=10 step=0.5 class=vertical value=5></td>
-                                        <td><input type=range id=multi_lk min=0 max=10 step=0.5 class=vertical value=5></td>
+                                        <td><input type=range id=multi_lambda min=0 max=10 step=0.5 orient=vertical value=5></td>
+                                        <td><input type=range id=multi_lk min=0 max=10 step=0.5 orient=vertical value=5></td>
                                     </tr>
                                 </table>
                                 <table class=hidden id=multi_fpr>
                                     <tr><td>F-pin</td></tr>
-                                    <tr><td><input type=range id=multi_pin_force min=0.01 max=1 step=0.05 class=vertical value=0.3></td></tr>
+                                    <tr><td><input type=range id=multi_pin_force min=0.01 max=1 step=0.05 orient=vertical value=0.3></td></tr>
                                 </table>                              
                             </div>
                             <div class=div450>
@@ -188,8 +188,8 @@
                     <progress value=0 max=1 id=progress_chap2 class=hidden></progress><br>
                     <button class="execute border2 long" onclick="temp_selector('clough');">Clough</button>
                     <button class="execute border2 long" onclick="temp_selector('imk');">IMK</button>
-                    <button class="execute border2 long" onclick="temp_selector('multi');">Multi</button>
-                    <div id=template></div>
+                    <button class="execute border2 long" onclick="temp_selector('multi');">Multi</button><br><br>
+                    <div id=template class=text-left></div>
                     <a class=text-left href="#description_chap2" onclick="return openclose(this);">Description</a> 
                     <div class=text-left id=description_chap2>
                         　ここで決めた復元力特性が他の章でも使われます。<br>
@@ -308,9 +308,9 @@
                     <div class=wrapper>
                         <div class=left>
                             <p class="plot border3"><canvas id=plot30 width=400 height=400></canvas></p>
-                            <input type=range min=0.1 max=1.5 step=0.05 id=range_chap3 value=1.0 class=vertical><br>
+                            <input type=range min=0.1 max=1.5 step=0.05 id=range_chap3 value=1.0 orient=vertical><br>
                             <progress value=0 max=1 id=progress_chap3></progress><br>
-                            <button class="execute border3" onclick="ga=gm_random(1);">Change GM</button>
+                            <button class="execute border3" onclick="ga=gm_random(1)[0];">Change GM</button>
                             <input type=number min=0.1 max=10.0 placeholder=Amplitude id=num_chap3 onChange="Chapter4();">
                             <button id=plot30_anime class="execute border3 long" onclick="Chapter3();">Run</button>
                             <button id=plot30_stop class="invisible" onclick="button_switch('plot30','stop');">Stop</button><br>
@@ -344,7 +344,7 @@
                     <div class=wrapper>
                         <div class=left>
                             <p class="plot border4"><canvas id=plot40 width=400 height=400></canvas></p>
-                            <input type=range min=1 max=30 step=1 id=range_chap4 value=5 class=vertical><br>
+                            <input type=range min=1 max=30 step=1 id=range_chap4 value=5 orient=vertical><br>
                             <progress value=0 max=1 id="progress_chap4"></progress><br>
                             <input type=number min=1 max=30 placeholder="No. of used GMs" id=num_chap4>
                             <button class="execute border4 long" onclick="Chapter4();">Run</button><br>
@@ -365,7 +365,7 @@
                     <div class="panel_next back5" id=next_chap5>
                         <h4>Next:崩壊確率曲線</h4>
                         <p class=text-left>
-                            4章では結果として中央値と標準偏差を示しましたが、少しイメージがしづらいと思うので分かりやすく崩壊確率曲線で見てみることにしましょう。
+                            4章では結果として平均値と標準偏差を示しましたが、少しイメージがしづらいと思うので分かりやすく崩壊確率曲線で見てみることにしましょう。
                         </p>
                         <button class="next back5" onclick="openclose(this);" href="#button_chap5">
                             Chapter 5. <br>
@@ -379,11 +379,9 @@
                 <div id=chap5 class=invisible>
                     <div class=wrapper>
                         <div class=left>
-                            <p class="plot border5"><canvas id=plot50></canvas></p><br>
+                            <p class="plot border5"><canvas id=plot50 width=400 height=400></canvas></p><br>
                         </div>
-                        <div class=right id=table_chap5>
-                            <table class=table_result><tr><th>NoGM*</th><th>MCA*</th><th>StD*</th></tr></table>
-                        </div>
+                        <div class=right id=table_chap5></div>
                     </div>
 
                     <a class=text-left href="#description_chap5" onclick="return openclose(this);">Description</a> 
@@ -397,6 +395,8 @@
         <a id=download_link></a>
         <div class=footer>
             <p class=text-left>
+                　Chrome、Microsoft Edge、Firefoxでの動作のみ確認しています。またInternet Explorer11ではボタンの操作も出来ないのでまったくコンテンツにアクセスできません。
+                Chromeでの閲覧をおすすめします。SafariとOperaでの動作については情報をお待ちしています。<br>
                 　このサイトはjQuery, Chart.js, noUiSlider.js, Materialize.css, indexedDBを利用しています。<br>
                 　本サイトで用いられている模擬地震動データと復元力特性コードは東京大学工学部塩原・田尻研究室によるものです。
             </p>
