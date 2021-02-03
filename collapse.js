@@ -660,10 +660,13 @@ function Chapter4(){
         const interv1=()=>new Promise(resolve=>{ 
             sint=setInterval(()=>{
                 control.amp=0.2+itr*0.1;
-                if(itr>30) clearInterval(sint);
+                if(control.amp>5.0){
+                    console.log("too large amp",control.amp);
+                    clearInterval(sint);
+                }
                 const result=sdf(system,gm,control);
-                const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)))/system.h[0];
-                if(defmax>0.25||result.collapse==="Collapse"){
+                const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)),0)/system.h[0];
+                if(defmax>0.15||result.collapse==="Collapse"){
                     supamp=control.amp;
                     supdef=defmax;
                     resolve();
@@ -678,13 +681,13 @@ function Chapter4(){
         });
         const interv2=()=>new Promise(resolve=>{
             sint42=setInterval(()=>{
-                if((supamp-infamp)<0.001){
+                if(0.001>Math.abs(supamp-infamp)){
                     resolve();
                     clearInterval(sint42);
                 }else{
                     control.amp=(infamp+supamp)/2;
                     const result=sdf(system,gm,control);
-                    const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)));
+                    const defmax=result.dsp.reduce((acc,val)=>Math.max(Math.abs(acc),Math.abs(val)),0)/system.h[0];
                     if(defmax>0.15||result.collapse==="Collapse"){
                         supamp=control.amp;
                         supdef=defmax;
@@ -699,6 +702,7 @@ function Chapter4(){
         });
         const interv3=()=>new Promise(resolve=>{
             plot.data.datasets[idx].data.push({x:supdef,y:supamp});
+            console.log(supdef);
             if(supamp>plot.options.scales.yAxes[0].ticks.max-0.1) plot.options.scales.yAxes[0].ticks.max=supamp+0.1;
             plot.update();
             resolve(supamp);
@@ -711,6 +715,7 @@ function Chapter4(){
         let idx=0,ampdict={};
         for(const val of gmset){
             ampdict[val.name]=await sdfida(val,idx,system,control,plot40);
+            console.log(val.name);
             elem("progress_chap4").value=(idx+1)/gmset.length;
             console.log(performance.now()-perbegin);
             idx++;
