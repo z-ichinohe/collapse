@@ -9,9 +9,6 @@
         <link rel=stylesheet href="collapse.css">
     </head>
     <body>
-        <div class=header>
-            <input type=file id=jsonfile accept=".json" onChange="loadFile();">
-        </div>
         <div class=main>
             <div class=tab>
                 <a class="tab back1" href="#button_chap1" onclick="openclose(this);"></a><br>
@@ -215,6 +212,12 @@
                                 <td>　復元力特性モデルの変更、リセット</td>
                             </tr>
                             <tr>
+                                <th>テンプレート</th>
+                                <td>　以前使用したパラメータ設定を再使用することが出来ます、See Descriptionをクリックすると詳細なパラメータ設定が表示されますが
+                                    同時に選択されてしまうのでお気を付けください。
+                                </td>
+                            </tr>
+                            <tr>
                                 <th>以下スライダ</th>
                                 <td></td>
                             </tr>
@@ -293,7 +296,7 @@
                     <div class="panel_next back3" id=next_chap3>
                         <h4>Next:崩壊解析</h4>
                         <p class="text-left">
-                            　自分で選んだ復元力特性で、自分で決めたパラメータ設定で、とりあえず揺らしてみましょう！
+                            　自分で選んだ復元力特性で、自分で決めたパラメータ設定で、バネを揺らしてみましょう！
                         </p>
                         <button class="next back3" onclick="openclose(this);Chapter3();" href="#button_chap3">
                             Chapter 3. <br>
@@ -321,15 +324,15 @@
                     </div>
                     <a class=text-left href="#description_chap3" onclick="return openclose(this);" class=text-left>Description</a> 
                     <p id=description_chap3 class=text-left>
-                        　Change GMで地震動を、右側のスライダかもしくは入力欄で入力倍率を選択してRunで揺らしてみましょう。<br>
+                        　Change GMで地震動を、右側のスライダかもしくは入力欄で入力倍率を選択してRunをクリックして揺らしてみましょう。<br>
                         　右側のResultにCollapseと出たら壊れてしまったことを示します。Not Yetと出たらその倍率では壊れなかったわけです。<br>
                         　崩壊に至る最小の倍率が崩壊倍率だと言えるでしょう。さて、別の地震動でも崩壊倍率は同じになるでしょうか。
                     </p>
                     <div class="panel_next back4" id=next_chap4>
                         <h4>Next:漸増動的解析</h4>
                         <p class=text-left>
-                            　自分でいくつか試してみて崩壊倍率を探してもらったと思いますが、これをコンピュータにやってもらえばだいぶ楽に、多くの地震波について崩壊倍率を
-                            得ることが出来るはずです。これが漸増動的解析、通称IDAです。
+                            　自分でいくつか試してみて崩壊倍率を探してもらったとことと思いますが、これをコンピュータにやってもらえばだいぶ楽に、多くの地震波について崩壊倍率を
+                            得ることが出来るはずです。これが漸増動的解析です。
                         </p>
                         <button class="next back4" onclick="openclose(this);Chapter4();" href="#button_chap4">
                             Chapter 4. <br>
@@ -356,26 +359,27 @@
 
                     <a class=text-left href="#description_chap4" onclick="return openclose(this);">Description</a> 
                     <p class=text-left id=description_chap4>
-                        　スライダで入力地震波の数を選択します、一般的なCPUの性能では1波2秒くらいで出来るはずです。<br><br>
+                        　スライダで入力地震波の数を選択します。計算時間は復元力特性とお使いのCPUの性能によって変わりますが、
+                        Intel i5-6300UでIMKモデルを計算すると1波につき2秒くらいになります。最大の30波で計算すると1分少々かかる可能性があります、ご注意ください。<br><br>
                         　ここでは横軸に最大変位を、縦軸に入力倍率を取っています。先ほどは崩壊の定義を詳しく示しませんでしたが、
-                        少なくともここでは少しの倍率の増加で変位が急激に拡大することを崩壊とみなすことが出来ます。<br><br>
+                        少なくともここでは少しの倍率の増加で変位が急激に拡大することを崩壊とみなすことが出来るでしょう。<br><br>
                         　さて、耐力低下も最大強度到達もないCloughモデルを用いても、この崩壊は明瞭なものになるでしょうか。<br><br>
                         *NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation
                     </p>
                     <div class="panel_next back5" id=next_chap5>
                         <h4>Next:崩壊確率曲線</h4>
                         <p class=text-left>
-                            4章では結果として平均値と標準偏差を示しましたが、少しイメージがしづらいと思うので分かりやすく崩壊確率曲線で見てみることにしましょう。
+                            　本チャプターでは結果として平均値と標準偏差を示しましたが、少しイメージがしづらいので、分かりやすく崩壊確率曲線で見てみることにしましょう。
                         </p>
                         <button class="next back5" onclick="openclose(this);" href="#button_chap5">
                             Chapter 5. <br>
-                            Summary of Results
+                            Fragility Curves
                         </button>                        
                     </div>
                     <a href="#chap4" onclick="openclose(this);">Close</a>
                 </div>
 
-                <button class="open back5 border5" onclick="openclose(this);" href="#chap5" id=button_chap5>5. Summary of Results</button>
+                <button class="open back5 border5" onclick="openclose(this);" href="#chap5" id=button_chap5>5. Fragility Curves</button>
                 <div id=chap5 class=invisible>
                     <div class=wrapper>
                         <div class=left>
@@ -386,21 +390,27 @@
 
                     <a class=text-left href="#description_chap5" onclick="return openclose(this);">Description</a> 
                     <p class=text-left id=description_chap5>
-
+                        　崩壊確率曲線は横軸に地震波の入力倍率、縦軸に崩壊確率を取ってプロットしたもので、入力倍率に対する崩壊の累積確率分布と
+                        言ってもよいでしょう。<br><br>
+                        　右側のパネルをクリックするとそのデータの表示/非表示を切り替えることが出来ます。<br>
+                        　また、左下のSee Descriptionを押すとパラメータの設定内容が見られます。<br>
+                        　これらのデータはすべてローカルストレージに保存されるのでまたアクセスしなおしても表示されますが、データを削除したい場合はDeleteを押してください。<br>
+                        　数字を見ても何がなんやら分からん！という方はChapter2にも同じようにパネルが表示されているはずなので、それをクリックして参照してみてください。
                     </p>
                     <a href="#chap5" onclick="openclose(this);">Close</a>
                 </div>
+                <div class="footer border0">
+                    <p class=text-left>
+                        　Chrome、Microsoft Edge、Firefoxでの動作を確認しています。Internet Explorer11ではボタンの操作が出来ないのでまったくコンテンツにアクセスできません。
+                        Chromeでの閲覧をおすすめします。SafariとOperaでの動作はたぶん問題ないと推測していますが、何かありましたらご連絡ください。<br>
+                        　このサイトはjQuery, Chart.js, noUiSlider.js, Materialize.css, indexedDBを利用しています。<br>
+                        　本サイトで用いられている模擬地震動データと復元力特性コードは東京大学工学部建築学科塩原・田尻研究室によるものです。
+                    </p>
+                </div> 
             </div>
+
         </div>
         <a id=download_link></a>
-        <div class=footer>
-            <p class=text-left>
-                　Chrome、Microsoft Edge、Firefoxでの動作のみ確認しています。またInternet Explorer11ではボタンの操作も出来ないのでまったくコンテンツにアクセスできません。
-                Chromeでの閲覧をおすすめします。SafariとOperaでの動作については情報をお待ちしています。<br>
-                　このサイトはjQuery, Chart.js, noUiSlider.js, Materialize.css, indexedDBを利用しています。<br>
-                　本サイトで用いられている模擬地震動データと復元力特性コードは東京大学工学部塩原・田尻研究室によるものです。
-            </p>
-        </div> 
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.bundle.min.js"></script>
         <script src="hysteresismodel.js"></script>
