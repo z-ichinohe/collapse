@@ -23,9 +23,12 @@
                         Collapse Analyzerへようこそ<br>
                     </h4>
                     <p class=text-left>
-                        　このサイトでは年倒壊確率を算出するためなどに用いられる漸増動的解析のフローを、耐力低下を考慮することのできる
-                        Ibarra-Medina-Krawinklerモデルを用いた一自由度系の振動解析によって追うことが出来ます。
-                        初めての方は上のボタンをクリックして、誘導付きでお進みください。下のボタンをクリックすると、誘導なしでの閲覧が可能です。
+                        　このサイトでは年倒壊確率を算出するためなどに用いられる漸増動的解析のフローを、一自由度系の振動解析によって追うことが出来ます。<br><br>
+                        　現在日本では耐震設計において倒壊に対する余裕度を耐震安全性の尺度とする考え方が十分に普及しているとは言えません。
+                        一方で米国では耐力低下を考慮することのできるIbarra-Medina-Krawinklerモデルの提案によって倒壊解析を行い、年倒壊確率
+                        を算出することなどが現実のものになっています。まだあまり身近ではないIMK復元力特性や漸増動的解析をこのアプリを通じて少しでも知っていただけたら幸いです。<br><br>
+                        　初めての方は上のボタンをクリックして、誘導付きでお進みください。下のボタンをクリックすると、誘導なしでの閲覧が可能です。<br>
+                        　まずは計算機で計算された建物が（と言っても一自由度のバネですが）揺れるのをご覧いただきましょう。
                     </p>
                     <button class="next back1" onclick="openclose(this);Chapter1();" href="#button_chap1">
                         Chapter 1.<br>
@@ -50,7 +53,7 @@
                     <p id=description_chap1 class="text-left">
                         　地震時の建物の挙動を把握する方法の一つに計算機による地震応答解析があります。
                         この解析は複雑にしようと思えばいくらでも複雑にすることが出来ますが、今回は簡単に建物全体を一つのバネとみなす
-                        一自由度解析をすることにしましょう。<br><br>
+                        一自由度解析をすることにしました。<br><br>
                         　画面の右側には入力されている地震波形が、左側には地震波を受けて揺れるバネが
                         描かれています。入力倍率*を0.6倍としているので大きく揺れることもありますが、崩壊には至らないはずです。<br><br>
                         60秒かかるので飽きてきたらStopを押して止めてください。もう一度見たい方はRe Runをどうぞ。毎回入力される地震波が変わり、
@@ -61,9 +64,10 @@
                         <h4>Next:復元力特性</h4>
                         <p class=text-left>
                         　さて、建物全体をひとつのバネとみなした地震応答解析をご覧いただきましたが、このバネの復元力特性についてはまだお話していませんでした。
-                        バネとは基本的に入力された変位に対して、その変位を戻そうとする向きに復元力を発生させますが、微小変位においては変位と力が線形の関係にあるものの
+                        バネとは基本的に入力された変位に対して、その変位を戻そうとする向きに復元力を発生させるものですが、微小変位においては変位と力が線形の関係にあるものの、
                         大地震動を受けて変位が拡大すると、その線形の関係が崩れ、段々と複雑な応答を示すようになります。次はこの複雑で多彩な復元力特性に進むことにしますが、
                         まずは先ほどの一自由度系振動解析における変位ー力関係をアニメーションでご覧いただきましょう。
+                        *)ここで用いた復元力特性はIMK最大点指向型のものです。
                         </p>
                         <button class="next back2" onclick="openclose(this);result2animation(cyclic_data.data,'chap2',cyclic_data.dt);" href="#button_chap2">
                             Chapter 2. <br>
@@ -187,100 +191,99 @@
                     <button class="execute border2 long" onclick="temp_selector('imk');">IMK</button>
                     <button class="execute border2 long" onclick="temp_selector('multi');">Multi</button><br><br>
                     <div id=template class=text-left></div>
+                    <a class=text-left href="#description_chap2" onclick="return openclose(this);">Slider Description</a>
+                    <table id=description_table class=invisible>
+                        <tr>
+                            <th>プロット画面</th>
+                            <td>　赤色が変位を正にしたり負にしたりしながら、その絶対値を大きくしていく
+                                Cyclicな載荷によるもので、水色が変位を単調増加させて押し切るMonotonicな載荷によるものです。</td>
+                        </tr>
+                        <tr>
+                            <th>Animateボタン</th>
+                            <td>　Cyclicな載荷での結果をAnimationで見ることが出来ます。</td>
+                        </tr>
+                        <tr>
+                            <th>PO/Slipボタン</th>
+                            <td>　IMKモデルとオールマイティモデルでは右下のPO/Slipボタンで最大点指向型とピンチング型を交換することが出来ます。
+                                ピンチング形状が現れない場合は該当するスライダを調節してください。</td>
+                        </tr>
+                        <tr>
+                            <th>Clough/IMK/Multi</th>
+                            <td>　復元力特性モデルの変更、リセット</td>
+                        </tr>
+                        <tr>
+                            <th>テンプレート</th>
+                            <td>　以前使用したパラメータ設定を再使用することが出来ます、See Descriptionをクリックすると詳細なパラメータ設定が表示されますが
+                                同時に選択されてしまうのでお気を付けください。
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>以下スライダ</th>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <th>Clough</th>
+                            <td>　骨格曲線のパラメータ<br>
+                                　asは降伏後剛性<br>
+                                　dyは降伏変位</td>
+                        </tr>
+                        <tr>
+                            <th>IMK as,ac,Res</th>
+                            <td>　強度、剛性のパラメータ<br>
+                                　asは降伏後剛性<br>
+                                　acは最大強度到達後剛性<br>
+                                　Resは強度低下後残存耐力</td>
+                        </tr>
+                        <tr>
+                            <th>IMK Λs,c,k,a,dt0</th>
+                            <td>　耐力低下に関わるパラメータ<br>
+                                　Λsは降伏後強度<br>
+                                　Λcは最大強度到達後強度<br>
+                                　Λkは除荷剛性<br>
+                                　Λaは指向点変位スライド<br>
+                                　dt0は初期指向点変位スライド。<br>
+                                　Λaはdt0が入力された状態でないと変化が現れないが、小さい値を指定すると吸収可能エネルギーを上回って崩壊となる可能性があるので注意。
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>IMK dy,dc,du</th>
+                            <td>　変位のパラメータ<br>
+                                　左がdyで右がdc<br>
+                                　dyは降伏変位<br>
+                                　dcは最大強度到達変位<br>
+                                　duは限界変位<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>IMK,Multi <br>F-pin,D-pin</th>
+                            <td>　ピンチング形状のパラメータ<br>
+                                　F-pinはピンチング終了強度<br>
+                                　D-pinはピンチング終了変位<br>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Multi f0,f1...</th>
+                            <td>　強度のパラメータ<br>　
+                                　骨格曲線上の点における強度</td>
+                        </tr>
+                        <tr>
+                            <th>Multi Λ,Λk</th>
+                            <td>　耐力低下のパラメータ<br>
+                                　Λは骨格曲線<br>
+                                　Λkは除荷剛性<br>
+                            </td>
+                        </tr>
+                        <th>Multi d0,d1...</th>
+                        <td>　変位のパラメータ<br>
+                            　Addで追加(７つまで)<br>
+                            　Removeで削除(2つまで)<br>
+                        </td>
+                    </table>
                     <a class=text-left href="#description_chap2" onclick="return openclose(this);">Description</a> 
                     <div class=text-left id=description_chap2>
                         　ここで決めた復元力特性が他の章でも使われます。<br>
-                        　Descriptionをクリックで閉じたり開いたりできます。<br>
-                        画面の説明<br>
-                        <table id=description_table>
-                            <tr>
-                                <th>プロット画面</th>
-                                <td>　赤色が変位を正にしたり負にしたりしながら、その絶対値を大きくしていく
-                                    Cyclicな載荷によるもので、水色が変位を単調増加させて押し切るMonotonicな載荷によるものです。</td>
-                            </tr>
-                            <tr>
-                                <th>Animateボタン</th>
-                                <td>　Cyclicな載荷での結果をAnimationで見ることが出来ます。</td>
-                            </tr>
-                            <tr>
-                                <th>PO/Slipボタン</th>
-                                <td>　IMKモデルとオールマイティモデルでは右下のPO/Slipボタンで最大点指向型とピンチング型を交換することが出来ます。
-                                    ピンチング形状が現れない場合は該当するスライダを調節してください。</td>
-                            </tr>
-                            <tr>
-                                <th>Clough/IMK/Multi</th>
-                                <td>　復元力特性モデルの変更、リセット</td>
-                            </tr>
-                            <tr>
-                                <th>テンプレート</th>
-                                <td>　以前使用したパラメータ設定を再使用することが出来ます、See Descriptionをクリックすると詳細なパラメータ設定が表示されますが
-                                    同時に選択されてしまうのでお気を付けください。
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>以下スライダ</th>
-                                <td></td>
-                            </tr>
-                            <tr>
-                                <th>Clough</th>
-                                <td>　骨格曲線のパラメータ<br>
-                                    　asは降伏後剛性<br>
-                                    　dyは降伏変位</td>
-                            </tr>
-                            <tr>
-                                <th>IMK as,ac,Res</th>
-                                <td>　強度、剛性のパラメータ<br>
-                                    　asは降伏後剛性<br>
-                                    　acは最大強度到達後剛性<br>
-                                    　Resは強度低下後残存耐力</td>
-                            </tr>
-                            <tr>
-                                <th>IMK Λs,c,k,a,dt0</th>
-                                <td>　耐力低下に関わるパラメータ<br>
-                                    　Λsは降伏後強度<br>
-                                    　Λcは最大強度到達後強度<br>
-                                    　Λkは除荷剛性<br>
-                                    　Λaは指向点変位スライド<br>
-                                    　dt0は初期指向点変位スライド。<br>
-                                    　Λaはdt0が入力された状態でないと変化が現れないが、小さい値を指定すると吸収可能エネルギーを上回って崩壊となる可能性があるので注意。
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>IMK dy,dc,du</th>
-                                <td>　変位のパラメータ<br>
-                                    　左がdyで右がdc<br>
-                                    　dyは降伏変位<br>
-                                    　dcは最大強度到達変位<br>
-                                    　duは限界変位<br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>IMK,Multi <br>F-pin,D-pin</th>
-                                <td>　ピンチング形状のパラメータ<br>
-                                    　F-pinはピンチング終了強度<br>
-                                    　D-pinはピンチング終了変位<br>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Multi f0,f1...</th>
-                                <td>　強度のパラメータ<br>　
-                                    　骨格曲線上の点における強度</td>
-                            </tr>
-                            <tr>
-                                <th>Multi Λ,Λk</th>
-                                <td>　耐力低下のパラメータ<br>
-                                    　Λは骨格曲線<br>
-                                    　Λkは除荷剛性<br>
-                                </td>
-                            </tr>
-                            <th>Multi d0,d1...</th>
-                            <td>　変位のパラメータ<br>
-                                　Addで追加(７つまで)<br>
-                                　Removeで削除(2つまで)<br>
-                            </td>
-                        </table>
-                        <br><br>
-                        　復元力特性は履歴的な変位の入力と復元力が一対一に対応させる関係です。今回は比較的単純なバイリニア型のCloughモデルと、
+                        　Descriptionをクリックすることで閉じたり開いたりできます。<br><br>
+                        　復元力特性は履歴的な変位の入力に復元力に対応させる関係です。今回は比較的単純なバイリニア型のCloughモデルと、
                         耐力低下を考慮することのできるIbarra-Medina-Krawinklerモデル、さらに耐力低下を単純にした代わりに骨格曲線を任意にした
                         オールマイティな復元力特性の3つを取り上げています。復元力特性で重要なのはMonotonicな載荷で現れる骨格曲線の概形と、
                         再載荷時の指向点を決める規則と、Cyclicな載荷で現れる耐力低下の3つです。<br><br>
@@ -296,7 +299,9 @@
                     <div class="panel_next back3" id=next_chap3>
                         <h4>Next:崩壊解析</h4>
                         <p class="text-left">
-                            　自分で選んだ復元力特性で、自分で決めたパラメータ設定で、バネを揺らしてみましょう！
+                            　どのスライダを動かすと何が変わるか分かったでしょうか、少しトリッキーなものもあるので分からなかったらSlider Descriptionを見てみると少し役に立つかもしれません。
+                            特にオールマイティモデルは変な形になったらΛkをいじると落ち着いたりするかもしれませんね。<br><br>
+                            　さあ自分で選んだ復元力特性で、自分で決めたパラメータ設定のバネを揺らしてみましょう！
                         </p>
                         <button class="next back3" onclick="openclose(this);Chapter3();" href="#button_chap3">
                             Chapter 3. <br>
@@ -360,16 +365,21 @@
                     <a class=text-left href="#description_chap4" onclick="return openclose(this);">Description</a> 
                     <p class=text-left id=description_chap4>
                         　スライダで入力地震波の数を選択します。計算時間は復元力特性とお使いのCPUの性能によって変わりますが、
-                        Intel i5-6300UでIMKモデルを計算すると1波につき2秒くらいになります。最大の30波で計算すると1分少々かかる可能性があります、ご注意ください。<br><br>
+                        Intel i5-6300UでIMKモデルを計算すると1波につき2秒くらいになりました。最大の30波で計算すると1分少々かかる可能性があります、ご注意ください。<br><br>
                         　ここでは横軸に最大変位を、縦軸に入力倍率を取っています。先ほどは崩壊の定義を詳しく示しませんでしたが、
-                        少なくともここでは少しの倍率の増加で変位が急激に拡大することを崩壊とみなすことが出来るでしょう。<br><br>
+                        少なくともここでは少しの倍率の増加で変位が急激に拡大することを崩壊とみなすことが出来るでしょう。<br>
                         　さて、耐力低下も最大強度到達もないCloughモデルを用いても、この崩壊は明瞭なものになるでしょうか。<br><br>
-                        *NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation
+                        　また、ばらつきは思ったより大きかったでしょうか、それとも意外と小さかったでしょうか。今回はどれも同じ応答加速度スペクトル
+                        になる模擬地震動を用いていますが、米国の耐震基準では単に係数倍でスケーリングした実地震動を用いることもあります。そうすると
+                        今回とは比べ物にならないほどばらつきは大きくなります。<br><br>
+                        *)NoGM=Number of Used Ground Motions, *MCA=Mean Collapse Amplitude, *StD=Standard Deviation<br>
+                        *)線が途中で途切れて終わることがあるのは、剛性0で無用な計算をするのを避けるためです。
                     </p>
                     <div class="panel_next back5" id=next_chap5>
                         <h4>Next:崩壊確率曲線</h4>
                         <p class=text-left>
-                            　本チャプターでは結果として平均値と標準偏差を示しましたが、少しイメージがしづらいので、分かりやすく崩壊確率曲線で見てみることにしましょう。
+                            　入力倍率を大きくすることで崩壊に至ることを体感していただけたでしょうか。本チャプターでは結果として平均値と標準偏差を示しましたが、
+                            これだけだと少しイメージがしづらいので、分かりやすく崩壊確率曲線で見てみることにしましょう。
                         </p>
                         <button class="next back5" onclick="openclose(this);" href="#button_chap5">
                             Chapter 5. <br>
