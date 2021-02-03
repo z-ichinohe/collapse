@@ -65,24 +65,28 @@ button.next{
 }
 
 .result{
-    width:300px;
+    width:100%px;
     border-radius:10px;
     border:solid 4px;
     background-color: #fff;
-    margin-top:10px;
-    margin-right:10px;
     font-size: 13px;
+    display:inline-block;
 }
 
-a.a_result{
+.div_result{
+    width:300px;
     margin-top:0px;
-    margin-bottom: 0px;
+    float:left;
 }
+
 a.a_left{
     float:left;
+    margin-top:0px;
 }
 a.a_right{
     float:right;
+    margin-top: 0px;
+    margin-right:20px;
 }
 a.tab{
     display:inline-block;
@@ -219,9 +223,13 @@ input[type=range][orient=vertical]{
 
 /* Footer */
 .footer{
+    margin-top:10px;
     clear:both;
     margin-left:auto;
     margin-right: auto;
+    width: 900px;
+    border:solid 5px;
+    border-radius: 10px;
 }
 
 /* Division */
@@ -285,6 +293,9 @@ a{
     background-color:#54ca89 ;
 }
 
+.border0{
+    border-color:#00ada9;
+}
 .border1{
     border-color:#f39700;
 }
@@ -300,6 +311,14 @@ a{
 .border5{
     border-color:#009944;
 }
+
+#chap5 .border6{
+    border-color:#009944;
+}
+#template .border6{
+    border-color:#e60012;
+}
+
 
 h4{
     padding-top: 20px;
@@ -325,4 +344,6 @@ h4{
 }
 #template{
     font-size:13.3px;
+    width:100%;
+    display: inline-block;
 }
